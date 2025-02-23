@@ -4,6 +4,9 @@ import { MathOperator } from '../operators/MathOperator';
 import { Stack } from '../../common/components/Stack';
 import type { TToken } from './types';
 
+// TODO 1. move from check last item, its not robust
+//      2. clean from is methods
+//      3. extract checker and processor
 export class RPNCalculator<Operator extends string> {
   private stack = new Stack<number>();
 

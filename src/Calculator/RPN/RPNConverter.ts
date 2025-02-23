@@ -2,12 +2,18 @@ import { ErrorMessage, throwError } from '../../common/errors';
 import { Stack } from '../../common/components/Stack';
 import { isExist } from '../../common/utils';
 import { Bracket, BRACKET_PRIORITY, type TBracket } from '../brackets/constants';
+import { Operator } from '../operators/constants';
 import { MathOperator } from '../operators/MathOperator';
 import { ExpressionChunkType } from './enums';
 import { TokenAccumulator } from '../../common/components/TokenAccumulator';
+import { parseAndReplaceUnaryMinus } from './parseAndReplaceUnaryMinus';
 import type { TToken } from './types';
 import { validateExpression } from './validation';
 
+// TODO 1. remove validation and tokenization
+//      2. clean from is methods
+//      3. extract checker and processor
+//      4. remove unary hardcode
 export class RPNConverter<Operator extends string> {
   private readonly supportedOperators: MathOperator<Operator>[];
 
@@ -41,14 +47,23 @@ export class RPNConverter<Operator extends string> {
     this.supportedOperators = operators;
   }
 
+  private convertUnaryOperatorsIfNeeded(expression:string) {
+    if (this.supportedOperators.find(operator => operator === Operator.UnaryMinus)) {
+      return parseAndReplaceUnaryMinus(expression);
+    }
+
+    return expression;
+  }
+
   public convertToRPN(expression: string): (TToken | MathOperator<Operator>)[] {
-    const validatedExpression = validateExpression(expression);
-    const tokenizedExpression = this.tokenizeExpression(validatedExpression);
-    const outputNotation = this.getConvertedExpression(tokenizedExpression);
+    const validated = validateExpression(expression);
+    const converted = this.convertUnaryOperatorsIfNeeded(validated);
+    const tokenized = this.tokenizeExpression(converted);
+    const output = this.getConvertedExpression(tokenized);
 
     this.resetNotationAndOperatorsStack();
 
-    return outputNotation;
+    return output;
   }
 
   private tokenizeExpression(expression: string): string[] {

@@ -1,5 +1,5 @@
 import { ErrorMessage, throwError } from '../../common/errors';
-import { Bracket } from './constants';
+import { Bracket, type TBracket, type TBracketObject } from './constants';
 
 export const checkBrackets = (expression: string): void => {
   const counter: Record<string, number> = {};
@@ -14,3 +14,7 @@ export const checkBrackets = (expression: string): void => {
     throwError(ErrorMessage.UnmatchedBrackets);
   }
 };
+
+export const isLeftBracket = (str: string): str is TBracketObject['Left'] => str === Bracket.Left;
+export const isRightBracket = (str: string): str is TBracketObject['Right'] => str === Bracket.Right;
+export const isBracket = (str: string): str is TBracket => isLeftBracket(str) || isRightBracket(str);

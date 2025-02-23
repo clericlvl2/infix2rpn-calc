@@ -1,6 +1,5 @@
 import { ErrorMessage, throwError } from '../../common/errors';
 import { isZero } from '../../common/utils';
-import type { ObjectValuesAsUnion } from '../../common/types';
 import { type IMathOperatorOptions, MathOperator } from './MathOperator';
 
 export const Sign = {
@@ -11,7 +10,8 @@ export const Sign = {
   Divide: '/',
 } as const;
 
-export type TOperator = ObjectValuesAsUnion<typeof Sign>;
+export type TSignObject = typeof Sign;
+export type TOperator = TSignObject[keyof TSignObject];
 
 type TOperatorsConfig = {
   [Sign in TOperator]: IMathOperatorOptions<Sign>
@@ -32,7 +32,7 @@ const OPERATORS_CONFIGS: TOperatorsConfig = {
   },
   [Sign.UnaryMinus]: {
     symbol: Sign.UnaryMinus,
-    priority: 1,
+    priority: 3,
     arity: 1,
     action: (val: number) => -1 * val,
   },

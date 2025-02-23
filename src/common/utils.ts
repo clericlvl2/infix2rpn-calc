@@ -1,4 +1,5 @@
 const WHITE_SPACES_REGEX = /[\s\u00A0]+/g;
+const DECIMAL_NUMBER_REGEX = /^-?\d+(?:\.\d+)?$/;
 
 export const filterWhitespaces = (str: string): string => {
   return str.replace(WHITE_SPACES_REGEX, '');
@@ -17,3 +18,5 @@ export const isEmptyString = (str: string | ''): str is '' => {
 };
 
 export const isString = (value: unknown | string): value is string => typeof value === 'string';
+
+export const isStrictStringifiedNumber = (value: string) => DECIMAL_NUMBER_REGEX.test(value);

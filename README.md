@@ -2,7 +2,6 @@
 
 ## Plans
 
-- add unary minus
 - connect validation and bypassed operators
 - add path aliases for ts
 - extend tests for differents operators sets
