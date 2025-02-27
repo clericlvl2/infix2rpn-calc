@@ -118,7 +118,7 @@ export class RPNConverter<Operator extends string> {
   private processOperatorChunk(chunk: Operator): void {
     const operatorPriority = this.getChunkOperatorPriority(chunk);
     const topItem = this.operatorsStack.readTop();
-    const topItemPriority = this.getStackItemPriority(topItem);
+    const topItemPriority = this.getStackItemPrecedence(topItem);
 
     if (isExist(topItem) && operatorPriority <= topItemPriority) {
       this.operatorsStack.popTopTo(this.notation);
@@ -163,9 +163,9 @@ export class RPNConverter<Operator extends string> {
     this.notation.push(chunk);
   }
 
-  private getStackItemPriority(stackItem: TBracket | MathOperator<Operator> | undefined): number {
-    return !!stackItem && this.isMathOperator(stackItem)
-      ? stackItem.priority
+  private getStackItemPrecedence(item: TBracket | MathOperator<Operator> | undefined): number {
+    return !!item && this.isMathOperator(item)
+      ? item.precedence
       : BRACKET_PRIORITY;
   }
 
@@ -192,7 +192,7 @@ export class RPNConverter<Operator extends string> {
   private getChunkOperatorPriority(chunk: Operator): number {
     const mathOperator = this.getMathOperator(chunk);
 
-    return mathOperator?.priority ?? 0;
+    return mathOperator?.precedence ?? 0;
   }
 
   private getMathOperator(chunk: Operator | string): MathOperator<Operator> | undefined {

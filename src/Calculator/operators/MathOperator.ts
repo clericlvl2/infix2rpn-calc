@@ -1,31 +1,45 @@
-export interface IMathOperatorOptions<Sign extends string> {
-  priority: number;
+export interface IBaseMathOperator<Sign extends string> {
   arity: number;
   symbol: Sign;
+}
+
+export interface IMathOperator<Sign extends string = string> extends IBaseMathOperator<Sign> {
+  precedence: number;
   action: (...args: number[]) => number;
 }
 
-export class MathOperator<Sign extends string> {
-  public readonly priority: IMathOperatorOptions<Sign>['priority'];
-  public readonly arity: IMathOperatorOptions<Sign>['arity'];
-  public readonly symbol: IMathOperatorOptions<Sign>['symbol'];
-  public readonly execute: IMathOperatorOptions<Sign>['action'];
+export class RecognizedMathOperator<Sign extends string = string> implements IBaseMathOperator<Sign> {
+  public readonly arity;
+  public readonly symbol;
 
   constructor({
-    priority,
     arity,
     symbol,
-    action,
-  }: IMathOperatorOptions<Sign>) {
-    this.priority = priority;
+  }: IBaseMathOperator<Sign>) {
     this.arity = arity;
     this.symbol = symbol;
-    this.execute = action;
 
     Object.freeze(this);
   }
+}
 
-  toString() {
-    return `Operator (${this.symbol})`;
+export class MathOperator<Sign extends string = string> implements IMathOperator<Sign> {
+  public readonly precedence;
+  public readonly arity;
+  public readonly symbol;
+  public readonly action;
+
+  constructor({
+    precedence,
+    arity,
+    symbol,
+    action,
+  }: IMathOperator<Sign>) {
+    this.precedence = precedence;
+    this.arity = arity;
+    this.symbol = symbol;
+    this.action = action;
+
+    Object.freeze(this);
   }
 }

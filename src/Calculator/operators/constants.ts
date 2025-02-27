@@ -1,6 +1,6 @@
 import { ErrorMessage, throwError } from '../../common/errors';
 import { isZero } from '../../common/utils';
-import { type IMathOperatorOptions, MathOperator } from './MathOperator';
+import { type IMathOperator, MathOperator } from './MathOperator';
 
 export const Sign = {
   Plus: '+',
@@ -14,37 +14,37 @@ export type TSignObject = typeof Sign;
 export type TOperator = TSignObject[keyof TSignObject];
 
 type TOperatorsConfig = {
-  [Sign in TOperator]: IMathOperatorOptions<Sign>
+  [Sign in TOperator]: IMathOperator<Sign>
 }
 
 const OPERATORS_CONFIGS: TOperatorsConfig = {
   [Sign.Plus]: {
     symbol: Sign.Plus,
-    priority: 1,
+    precedence: 1,
     arity: 2,
     action: (val1: number, val2: number) => val1 + val2,
   },
   [Sign.Minus]: {
     symbol: Sign.Minus,
-    priority: 2,
+    precedence: 2,
     arity: 2,
     action: (val1: number, val2: number) => val1 - val2,
   },
   [Sign.UnaryMinus]: {
     symbol: Sign.UnaryMinus,
-    priority: 3,
+    precedence: 3,
     arity: 1,
     action: (val: number) => -1 * val,
   },
   [Sign.Multiply]: {
     symbol: Sign.Multiply,
-    priority: 2,
+    precedence: 2,
     arity: 2,
     action: (val1: number, val2: number) => val1 * val2,
   },
   [Sign.Divide]: {
     symbol: Sign.Divide,
-    priority: 2,
+    precedence: 2,
     arity: 2,
     action: (dividend: number, divisor: number) => {
       if (isZero(divisor)) {

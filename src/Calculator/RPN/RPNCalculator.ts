@@ -72,7 +72,7 @@ export class RPNCalculator<Operator extends string> {
 
     this.stack.popTo(actionParameters, mathOperator.arity);
 
-    const actionResult = mathOperator.execute(...actionParameters.reverse());
+    const actionResult = mathOperator.action(...actionParameters.reverse());
 
     this.stack.push(actionResult);
   }
