@@ -8,20 +8,22 @@ export class TokenAccumulator {
   }
 
   collect(): string {
-    return this.accumulator.join('');
-  }
-
-  flushTo(target: string[]) {
-    const token = this.collect();
-
-    if (!isEmptyString(token)) {
-      target.push(token);
-    }
+    const collected = this.accumulator.join('');
 
     this.reset();
+
+    return collected;
   }
 
-  reset() {
+  collectTo(target: string[]): void {
+    const collected = this.collect();
+
+    if (!isEmptyString(collected)) {
+      target.push(collected);
+    }
+  }
+
+  private reset() {
     this.accumulator = [];
   }
 }

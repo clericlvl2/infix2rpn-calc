@@ -3,7 +3,7 @@ export const ErrorMessage = {
   NotAllowedSymbols: 'Expression has not allowed symbols',
   IncorrectUnaryOperator: 'Invalid unary operator found',
   HasNotSupportedOperators: 'Expression has not supported operators',
-  UnmatchedBrackets: 'Expression has unmatched brackets',
+  UnmatchedParentheses: 'Expression has unmatched parentheses',
   DivisionByZero: 'Divide by zero is not supported',
   CalculationError: 'Error while calculating happened',
 } as const;

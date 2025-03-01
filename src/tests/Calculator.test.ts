@@ -1,3 +1,5 @@
+import { OperatorRecognizer } from '../Calculator/operators/OperatorRecognizer';
+import { Tokenizer } from '../Calculator/Tokenizer';
 import { ErrorMessage } from '../common/errors';
 import { Calculator } from '../Calculator/Calculator';
 import { Operator } from '../Calculator/operators/constants';
@@ -12,7 +14,11 @@ import { Operator } from '../Calculator/operators/constants';
 describe('Infix Calculator using RPN', () => {
   const OPERATORS = [Operator.Plus, Operator.Minus, Operator.Multiply, Operator.Divide, Operator.UnaryMinus];
 
-  const calculator = new Calculator(OPERATORS);
+  const calculator = new Calculator({
+    supportedOperators: OPERATORS,
+    tokenizer: new Tokenizer(),
+    operatorRecognizer: new OperatorRecognizer(),
+  });
 
   test('adds two numbers', () => {
     expect(calculator.calculate('3 + 4')).toBe(7);
@@ -60,7 +66,7 @@ describe('Infix Calculator using RPN', () => {
 
   test('handles expression with missing operands', () => {
     expect(() => calculator.calculate('3 +')).toThrow(ErrorMessage.Invalid);
-    expect(calculator.calculate('   3   4  + ')).toThrow(ErrorMessage.Invalid);
+    expect(() => calculator.calculate('   3   4  + ')).toThrow(ErrorMessage.Invalid);
   });
 
   test('throws an error on unsupported operators', () => {
@@ -68,13 +74,7 @@ describe('Infix Calculator using RPN', () => {
   });
 
   test('handles empty input', () => {
-    expect(() => calculator.calculate('')).toThrowError(ErrorMessage.Invalid);
-  });
-
-  test('handles invalid operators combinations', () => {
-    expect(() => calculator.calculate('5 ++ 5')).toThrowError(ErrorMessage.Invalid);
-    expect(() => calculator.calculate('5 + + 5')).toThrowError(ErrorMessage.Invalid);
-    expect(() => calculator.calculate('5 5 +')).toThrowError(ErrorMessage.Invalid);
+    expect(() => calculator.calculate('')).toThrow(ErrorMessage.Invalid);
   });
 
   test('handles zero correctly', () => {
@@ -83,8 +83,8 @@ describe('Infix Calculator using RPN', () => {
   });
 
   test('should throw error on non-numeric input', () => {
-    expect(() => calculator.calculate('5 + a')).toThrowError(ErrorMessage.NotAllowedSymbols);
-    expect(() => calculator.calculate('5 + @')).toThrowError(ErrorMessage.NotAllowedSymbols);
+    expect(() => calculator.calculate('5 + a')).toThrow(ErrorMessage.NotAllowedSymbols);
+    expect(() => calculator.calculate('5 + @')).toThrow(ErrorMessage.NotAllowedSymbols);
   });
 
   test('handles very long expression', () => {

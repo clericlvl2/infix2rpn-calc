@@ -19,4 +19,10 @@ export const isEmptyString = (str: string | ''): str is '' => {
 
 export const isString = (value: unknown | string): value is string => typeof value === 'string';
 
-export const isStrictStringifiedNumber = (value: string) => DECIMAL_NUMBER_REGEX.test(value);
+export const isStrictStringifiedNumber = (value: unknown): value is string => {
+  return isString(value) && DECIMAL_NUMBER_REGEX.test(value);
+}
+
+export const regexEscape = (string: string) => {
+  return string.replace(/[-\]\[.*+?^${}()|/]/g, '\\$&');
+};

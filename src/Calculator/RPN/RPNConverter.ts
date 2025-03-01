@@ -1,201 +1,91 @@
-import { ErrorMessage, throwError } from '../../common/errors';
 import { Stack } from '../../common/components/Stack';
 import { isExist } from '../../common/utils';
-import { Bracket, BRACKET_PRIORITY, type TBracket } from '../brackets/constants';
-import { Operator } from '../operators/constants';
+import { PARENTHESES_PRECEDENCE, type TParentheses } from '../parentheses/constants';
+import { isParenthesis, isOpeningParenthesis } from '../parentheses/utils';
 import { MathOperator } from '../operators/MathOperator';
-import { ExpressionChunkType } from './enums';
-import { TokenAccumulator } from '../../common/components/TokenAccumulator';
-import { parseAndReplaceUnaryMinus } from './parseAndReplaceUnaryMinus';
-import type { TToken } from './types';
-import { validateExpression } from './validation';
+import type { TEnrichedExpression, TNumberToken } from '../types';
+import { ExpressionTokenType } from '../tokenProcessor/enums';
+import { TokenProcessor } from '../tokenProcessor/TokenProcessor';
 
-// TODO 1. remove validation and tokenization
-//      2. clean from is methods
-//      3. extract checker and processor
-//      4. remove unary hardcode
-export class RPNConverter<Operator extends string> {
-  private readonly supportedOperators: MathOperator<Operator>[];
+export class RPNConverter {
+  private operatorsStack: Stack<MathOperator | TParentheses>;
+  private notation: TEnrichedExpression;
+  private tokenProcessor: TokenProcessor<TEnrichedExpression[number]>;
 
-  private operatorsStack = new Stack<MathOperator<Operator> | TBracket>();
+  constructor() {
+    this.operatorsStack = new Stack<MathOperator | TParentheses>();
+    this.notation = [];
 
-  private notation: (MathOperator<Operator> | TToken)[] = [];
-
-  private readonly expressionChunkProcessor = {
-    [ExpressionChunkType.Token]: this.processTokenChunk.bind(this),
-    [ExpressionChunkType.Operator]: this.processOperatorChunk.bind(this),
-    [ExpressionChunkType.Bracket]: this.processBracketChunk.bind(this),
-    [ExpressionChunkType.Unknown]: this.processUnknownChunk.bind(this),
-  } as const;
-
-  private readonly chunkCheckerPipeline = [
-    {
-      check: this.isTokenChunk.bind(this),
-      type: ExpressionChunkType.Token,
-    },
-    {
-      check: this.isOperatorChunk.bind(this),
-      type: ExpressionChunkType.Operator,
-    },
-    {
-      check: this.isBracketChunk.bind(this),
-      type: ExpressionChunkType.Bracket,
-    },
-  ] as const;
-
-  constructor(operators: MathOperator<Operator>[]) {
-    this.supportedOperators = operators;
+    this.tokenProcessor = new TokenProcessor({
+      supportedTokensTypes: [
+        ExpressionTokenType.Number,
+        ExpressionTokenType.Operator,
+        ExpressionTokenType.Bracket,
+      ],
+      tokenProcessor: {
+        [ExpressionTokenType.Number]: this.processTokenChunk.bind(this),
+        [ExpressionTokenType.Operator]: this.processOperatorChunk.bind(this),
+        [ExpressionTokenType.Bracket]: this.processBracketChunk.bind(this),
+      },
+    });
   }
 
-  private convertUnaryOperatorsIfNeeded(expression:string) {
-    if (this.supportedOperators.find(operator => operator === Operator.UnaryMinus)) {
-      return parseAndReplaceUnaryMinus(expression);
-    }
+  public convertToRPN(tokenizedExpression: TEnrichedExpression): (TNumberToken | MathOperator)[] {
+    const converted = this.getConvertedExpression(tokenizedExpression);
 
-    return expression;
+    this.resetConverter();
+
+    return converted;
   }
 
-  public convertToRPN(expression: string): (TToken | MathOperator<Operator>)[] {
-    const validated = validateExpression(expression);
-    const converted = this.convertUnaryOperatorsIfNeeded(validated);
-    const tokenized = this.tokenizeExpression(converted);
-    const output = this.getConvertedExpression(tokenized);
-
-    this.resetNotationAndOperatorsStack();
-
-    return output;
-  }
-
-  private tokenizeExpression(expression: string): string[] {
-    const tokenized: string[] = [];
-    const tokenAccumulator = new TokenAccumulator();
-
-    for (let chunk of expression) {
-      if (this.isTokenChunk(chunk)) {
-        tokenAccumulator.add(chunk);
-      } else {
-        tokenAccumulator.flushTo(tokenized);
-        tokenized.push(chunk);
-      }
-    }
-
-    tokenAccumulator.flushTo(tokenized);
-
-    return tokenized;
-  }
-
-  private getConvertedExpression(tokenizedExpression: string[]): (TToken | MathOperator<Operator>)[] {
-    this.initExpressionConversion(tokenizedExpression);
+  private getConvertedExpression(tokenizedExpression: TEnrichedExpression): (TNumberToken | MathOperator)[] {
+    tokenizedExpression.forEach(this.tokenProcessor.process);
     this.operatorsStack.popAllTo(this.notation);
 
     return this.notation;
   }
 
-  private initExpressionConversion(tokenizedExpression: string[]) {
-    tokenizedExpression.forEach(this.processExpressionChunk.bind(this));
+  private processTokenChunk(chunk: TNumberToken): void {
+    this.notation.push(chunk);
   }
 
-  /* Утилиты для обработки элемента математического выражения */
+  private processOperatorChunk(operator: MathOperator): void {
+    const topStackItem = this.operatorsStack.readTop();
+    const topStackItemPrecedence = this.getStackItemPrecedence(topStackItem);
 
-  private processExpressionChunk(chunk: string): void {
-    const chunkType = this.getExpressionChunkType(chunk);
-    const processor = this.expressionChunkProcessor[chunkType];
-
-    // @ts-ignore
-    processor(chunk);
-  }
-
-  private getExpressionChunkType(chunk: string): ExpressionChunkType {
-    const found = this.chunkCheckerPipeline.find(checker => checker.check(chunk));
-
-    return found?.type ?? ExpressionChunkType.Unknown;
-  }
-
-  private processTokenChunk(chunk: TToken): void {
-    this.addToNotation(chunk);
-  }
-
-  private processOperatorChunk(chunk: Operator): void {
-    const operatorPriority = this.getChunkOperatorPriority(chunk);
-    const topItem = this.operatorsStack.readTop();
-    const topItemPriority = this.getStackItemPrecedence(topItem);
-
-    if (isExist(topItem) && operatorPriority <= topItemPriority) {
+    if (isExist(topStackItem) && operator.precedence <= topStackItemPrecedence) {
       this.operatorsStack.popTopTo(this.notation);
     }
 
-    const mathOperator = this.getMathOperator(chunk);
-
-    if (isExist(mathOperator)) {
-      this.addToOperatorsStack(mathOperator);
-    }
+    this.operatorsStack.push(operator);
   }
 
-  private processBracketChunk(chunk: TBracket): void {
-    if (chunk === Bracket.Left) {
-      return this.addToOperatorsStack(chunk);
+  private processBracketChunk(chunk: TParentheses): void {
+    if (isOpeningParenthesis(chunk)) {
+      this.operatorsStack.push(chunk);
+      return;
     }
 
     let token = this.operatorsStack.pop();
 
-    while (token && token !== Bracket.Left && token !== Bracket.Right) {
-      this.addToNotation(token);
+    while (token && !isParenthesis(token)) {
+      this.notation.push(token);
       token = this.operatorsStack.pop();
     }
   }
 
-  private processUnknownChunk(): void {
-    throwError(ErrorMessage.Invalid);
-  }
-
-  /* Утилиты для работы со стеком операторов и выходной нотацией */
-
-  private resetNotationAndOperatorsStack(): void {
+  private resetConverter(): void {
     this.notation = [];
     this.operatorsStack.clear();
   }
 
-  private addToOperatorsStack(chunk: TBracket | MathOperator<Operator>): void {
-    this.operatorsStack.push(chunk);
-  }
-
-  private addToNotation(chunk: TToken | MathOperator<Operator>): void {
-    this.notation.push(chunk);
-  }
-
-  private getStackItemPrecedence(item: TBracket | MathOperator<Operator> | undefined): number {
-    return !!item && this.isMathOperator(item)
+  private getStackItemPrecedence(item: TParentheses | MathOperator | undefined): number {
+    return !!item && this.isOperatorToken(item)
       ? item.precedence
-      : BRACKET_PRIORITY;
+      : PARENTHESES_PRECEDENCE;
   }
 
-  /* Утилиты для проверки типа элемента математического выражения */
-
-  private isTokenChunk(chunk: string | TToken): chunk is TToken {
-    return !this.isOperatorChunk(chunk) && !this.isBracketChunk(chunk);
-  }
-
-  private isBracketChunk(chunk: string | TBracket): chunk is TBracket {
-    return chunk === Bracket.Right || chunk === Bracket.Left;
-  }
-
-  private isOperatorChunk(chunk: string | Operator): chunk is Operator {
-    const mathOperator = this.getMathOperator(chunk);
-
-    return !!mathOperator;
-  }
-
-  private isMathOperator(chunk: unknown | MathOperator<Operator>): chunk is MathOperator<Operator> {
+  private isOperatorToken(chunk: MathOperator | unknown): chunk is MathOperator {
     return chunk instanceof MathOperator;
-  }
-
-  private getChunkOperatorPriority(chunk: Operator): number {
-    const mathOperator = this.getMathOperator(chunk);
-
-    return mathOperator?.precedence ?? 0;
-  }
-
-  private getMathOperator(chunk: Operator | string): MathOperator<Operator> | undefined {
-    return this.supportedOperators.find(o => o.symbol === chunk);
   }
 }

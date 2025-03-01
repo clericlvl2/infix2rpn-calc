@@ -85,7 +85,7 @@ describe('OperatorRecognizer', () => {
       expect(result).toEqual([]);
     });
 
-    it('should handle expression with only numbers and brackets', () => {
+    it('should handle expression with only numbers and parentheses', () => {
       const tokenizedExpression = ['1', '(', '2', ')'];
       const result = operatorRecognizer.recognizeOperators(tokenizedExpression);
       expect(result).toEqual(['1', '(', '2', ')']);

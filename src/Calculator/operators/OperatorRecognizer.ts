@@ -1,29 +1,22 @@
 import { ErrorMessage, throwError } from '../../common/errors';
 import { isExist, isStrictStringifiedNumber as isNumber } from '../../common/utils';
-import type { TBracket } from '../brackets/constants';
-import { isBracket, isLeftBracket } from '../brackets/utils';
-import type { TToken } from '../RPN/types';
+import { isOpeningParenthesis, isParenthesis } from '../parentheses/utils';
+import type { TEnrichedExpression, TOperand, TRecognizedExpression, TTokenizedExpression } from '../types';
 import { type IMathOperator, MathOperator, RecognizedMathOperator } from './MathOperator';
-
-type TUnrecognizedOperator = string
-type TTokenizedExpression = (TToken | TBracket | TUnrecognizedOperator)[]
-type TRecognizedExpression = (TToken | TBracket | RecognizedMathOperator)[]
-type TEnrichedExpression = (TToken | TBracket | MathOperator)[]
-type TOperand = TBracket | TToken | undefined;
-
-const isOperator = (value: string) => !isNumber(value) && !isBracket(value);
 
 enum OperatorArity {
   Unary = 1,
   Binary = 2,
 }
 
+export const isUnrecognizedOperator = (value: string) => !isNumber(value) && !isParenthesis(value);
+
 export class OperatorRecognizer {
   recognizeOperators(tokenizedExpression: TTokenizedExpression): TRecognizedExpression {
     const recognizedExpression: TRecognizedExpression = [];
 
     tokenizedExpression.forEach((token, index, expression) => {
-      if (!isOperator(token)) {
+      if (!isUnrecognizedOperator(token)) {
         recognizedExpression.push(token);
         return;
       }
@@ -32,8 +25,10 @@ export class OperatorRecognizer {
       const rightOperand = expression[index + 1];
 
       const arity = this.determineArity(leftOperand, rightOperand);
-      const symbol = token;
-      const operator = new RecognizedMathOperator({ arity, symbol });
+      const operator = new RecognizedMathOperator({
+        arity,
+        symbol: token,
+      });
 
       recognizedExpression.push(operator);
     });
@@ -72,17 +67,25 @@ export class OperatorRecognizer {
   }
 
   private determineArity(leftOperand: TOperand, rightOperand: TOperand): OperatorArity {
+    const isExpressionInvalid = !isExist(rightOperand);
+
+    // TODO take operator associativity into account
+    if (isExpressionInvalid) {
+      throwError(ErrorMessage.Invalid);
+    }
+
     const isUnary =
       !isExist(leftOperand) ||
-      isLeftBracket(leftOperand) ||
-      isOperator(leftOperand);
-    const isRightOperandInvalid =
+      isOpeningParenthesis(leftOperand) ||
+      isUnrecognizedOperator(leftOperand);
+
+    const isUnaryOperatorInvalid =
       isUnary &&
       isExist(rightOperand) &&
-      !isLeftBracket(rightOperand) &&
+      !isOpeningParenthesis(rightOperand) &&
       !isNumber(rightOperand);
 
-    if (isRightOperandInvalid) {
+    if (isUnaryOperatorInvalid) {
       throwError(ErrorMessage.IncorrectUnaryOperator);
     }
 
