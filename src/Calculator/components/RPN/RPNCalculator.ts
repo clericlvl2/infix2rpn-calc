@@ -1,13 +1,14 @@
-import { Stack } from '../../common/components/Stack';
-import { ErrorMessage, throwError } from '../../common/errors';
-import { MathOperator } from '../operators/MathOperator';
-import type { TEnrichedExpression, TNumberToken } from '../types';
-import { ExpressionTokenType } from '../tokenProcessor/enums';
-import { TokenProcessor } from '../tokenProcessor/TokenProcessor';
+import { Stack } from '../../../shared/components/Stack';
+import { ErrorMessage, throwError } from '../../../shared/errors';
+import type { IMathOperator } from '../../../shared/math/types';
+
+import type { TEnrichedExpression, TNumberToken } from '../../types';
+import { ExpressionTokenType } from '../TokenProcessor/enums';
+import { TokenProcessor } from '../TokenProcessor/TokenProcessor';
 
 export class RPNCalculator {
   private stack: Stack<number>;
-  private tokenProcessor: TokenProcessor<TEnrichedExpression[number]>;
+  private tokenProcessor: TokenProcessor;
 
   constructor() {
     this.stack = new Stack<number>();
@@ -52,7 +53,7 @@ export class RPNCalculator {
     this.stack.push(token);
   }
 
-  private processOperator(mathOperator: MathOperator) {
+  private processOperator(mathOperator: IMathOperator) {
     const actionParameters: number[] = [];
 
     this.stack.popTo(actionParameters, mathOperator.arity);

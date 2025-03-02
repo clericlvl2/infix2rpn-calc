@@ -1,8 +1,6 @@
-import { OperatorRecognizer } from '../Calculator/operators/OperatorRecognizer';
-import { Tokenizer } from '../Calculator/Tokenizer';
-import { ErrorMessage } from '../common/errors';
+import { Operator } from '../App/constants';
 import { Calculator } from '../Calculator/Calculator';
-import { Operator } from '../Calculator/operators/constants';
+import { ErrorMessage } from '../shared/errors';
 
 /**
  * Calculator is not able to:
@@ -14,11 +12,7 @@ import { Operator } from '../Calculator/operators/constants';
 describe('Infix Calculator using RPN', () => {
   const OPERATORS = [Operator.Plus, Operator.Minus, Operator.Multiply, Operator.Divide, Operator.UnaryMinus];
 
-  const calculator = new Calculator({
-    supportedOperators: OPERATORS,
-    tokenizer: new Tokenizer(),
-    operatorRecognizer: new OperatorRecognizer(),
-  });
+  const calculator = new Calculator({ supportedOperators: OPERATORS });
 
   test('adds two numbers', () => {
     expect(calculator.calculate('3 + 4')).toBe(7);

@@ -1,4 +1,4 @@
-import { isExist } from '../utils';
+import { isExist } from '../validation';
 
 export class Stack<Item> {
   private stack: Item[];

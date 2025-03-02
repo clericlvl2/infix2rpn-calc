@@ -1,22 +1,39 @@
-import { ErrorMessage, throwError } from '../../common/errors';
-import { isExist, isStrictStringifiedNumber as isNumber } from '../../common/utils';
-import { isOpeningParenthesis, isParenthesis } from '../parentheses/utils';
-import type { TEnrichedExpression, TOperand, TRecognizedExpression, TTokenizedExpression } from '../types';
-import { type IMathOperator, MathOperator, RecognizedMathOperator } from './MathOperator';
+import { ErrorMessage, throwError } from '../../../shared/errors';
+import { isOpeningParenthesis, isParenthesis, type TParentheses } from '../../../shared/math/parentheses';
+import type { IMathOperator } from '../../../shared/math/types';
+import { isExist, isStrictStringifiedNumber as isNumber } from '../../../shared/validation';
+import type { TEnrichedExpression, TNumberToken, TOperand, TTokenizedExpression } from '../../types';
+import { RecognizedMathOperator } from './RecognizedMathOperator';
+
+export type TRecognizedExpression = (TNumberToken | TParentheses | RecognizedMathOperator)[]
 
 enum OperatorArity {
   Unary = 1,
   Binary = 2,
 }
 
-export const isUnrecognizedOperator = (value: string) => !isNumber(value) && !isParenthesis(value);
+interface ICalculatorOptions {
+  supportedOperators: IMathOperator[],
+}
 
-export class OperatorRecognizer {
-  recognizeOperators(tokenizedExpression: TTokenizedExpression): TRecognizedExpression {
+export class MathOperatorRecognizer {
+  private supportedOperators: IMathOperator[];
+
+  constructor({ supportedOperators }: ICalculatorOptions) {
+    this.supportedOperators = supportedOperators;
+  }
+
+  public recognize(tokenizedExpression: TTokenizedExpression): TEnrichedExpression {
+    const recognizedExpression = this.recognizeOperators(tokenizedExpression);
+
+    return this.enrichOperators(recognizedExpression);
+  }
+
+  private recognizeOperators(tokenizedExpression: TTokenizedExpression): TRecognizedExpression {
     const recognizedExpression: TRecognizedExpression = [];
 
     tokenizedExpression.forEach((token, index, expression) => {
-      if (!isUnrecognizedOperator(token)) {
+      if (!this.isUnrecognizedOperator(token)) {
         recognizedExpression.push(token);
         return;
       }
@@ -36,11 +53,11 @@ export class OperatorRecognizer {
     return recognizedExpression;
   }
 
-  enrichOperators(recognizedExpression: TRecognizedExpression, enrichedOperators: IMathOperator[]): TEnrichedExpression {
+  private enrichOperators(recognizedExpression: TRecognizedExpression): TEnrichedExpression {
     const enrichedExpression: TEnrichedExpression = [];
     const enrichedOperatorsMap = new Map<string, IMathOperator>();
 
-    enrichedOperators.forEach(operator => {
+    this.supportedOperators.forEach(operator => {
       const key = `${operator.symbol}${operator.arity}`;
       enrichedOperatorsMap.set(key, operator);
     });
@@ -60,7 +77,7 @@ export class OperatorRecognizer {
         throwError(ErrorMessage.HasNotSupportedOperators);
       }
 
-      enrichedExpression.push(enrichedOperatorsMap.get(key) as MathOperator);
+      enrichedExpression.push(enrichedOperatorsMap.get(key) as IMathOperator);
     });
 
     return enrichedExpression;
@@ -77,7 +94,7 @@ export class OperatorRecognizer {
     const isUnary =
       !isExist(leftOperand) ||
       isOpeningParenthesis(leftOperand) ||
-      isUnrecognizedOperator(leftOperand);
+      this.isUnrecognizedOperator(leftOperand);
 
     const isUnaryOperatorInvalid =
       isUnary &&
@@ -91,4 +108,8 @@ export class OperatorRecognizer {
 
     return isUnary ? OperatorArity.Unary : OperatorArity.Binary;
   }
+
+  private isUnrecognizedOperator = (value: string) => {
+    return !isNumber(value) && !isParenthesis(value);
+  };
 }

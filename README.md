@@ -2,10 +2,20 @@
 
 ## Plans
 
-- connect validation and bypassed operators
 - add path aliases for ts
-- extend tests for differents operators sets
-- add tests for basic utils
-- add basic ui. clean js or astro or smth lightweight
-- add fsd?
-- extract shared functionality from RPN classes
+- add calculator features
+  - add different associativity support (5!, for example)
+  - add multi-symbols named operators (sqrt, sin, etc.)
+  - add di for app components
+- increase test coverage
+  - extend Calculator tests (different operators sets, unary operators, etc)
+  - add operator recognizer tests
+  - add tokenizer tests
+  - add rpn converter tests
+  - add rpn calculator tests
+  - add common utils tests
+  - add validator tests
+- add basic ui (preact, astro, look in that way)
+  - minimalistic look calculator
+  - operators picker (unary operators enabled by default)
+  - operators creator

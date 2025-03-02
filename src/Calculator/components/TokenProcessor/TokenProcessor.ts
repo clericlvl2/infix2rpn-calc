@@ -1,46 +1,39 @@
-import { ErrorMessage, throwError } from '../../common/errors';
-import { isStrictStringifiedNumber as isNumber } from '../../common/utils';
-import type { TParentheses } from '../parentheses/constants';
-import { isParenthesis } from '../parentheses/utils';
-import { MathOperator } from '../operators/MathOperator';
-import type { TEnrichedExpression, TNumberToken } from '../types';
+import { ErrorMessage, throwError } from '../../../shared/errors';
+import type { TEnrichedExpression } from '../../types';
 import { ExpressionTokenType } from './enums';
-
-const isNumberToken = (chunk: TNumberToken | unknown): chunk is TNumberToken => isNumber(chunk);
-const isOperatorToken = (chunk: MathOperator | unknown): chunk is MathOperator => chunk instanceof MathOperator;
-const isBracketToken = (chunk: TParentheses | unknown): chunk is TParentheses => isParenthesis(chunk);
+import { isNumberToken, isOperatorToken, isParenthesisToken } from './utils';
 
 const TOKEN_TYPE_CHECKERS_MAP = {
   [ExpressionTokenType.Number]: isNumberToken,
   [ExpressionTokenType.Operator]: isOperatorToken,
-  [ExpressionTokenType.Bracket]: isBracketToken,
+  [ExpressionTokenType.Parenthesis]: isParenthesisToken,
 };
 
 type IExpressionTokenProcessor = {
   [key in ExpressionTokenType]: (token: any) => void;
 }
 
-interface ITokenProcessor<ExpressionToken> {
+interface ITokenProcessor {
   supportedTokensTypes: ExpressionTokenType[];
   tokenProcessor: Partial<IExpressionTokenProcessor>;
 }
 
-export class TokenProcessor<ExpressionToken> {
-  private readonly tokenProcessor: ITokenProcessor<ExpressionToken>['tokenProcessor'];
+export class TokenProcessor {
+  private readonly tokenProcessor: ITokenProcessor['tokenProcessor'];
   private readonly tokensTypes: ExpressionTokenType[];
 
   constructor({
     supportedTokensTypes,
     tokenProcessor,
-  }: ITokenProcessor<ExpressionToken>) {
+  }: ITokenProcessor) {
     this.tokensTypes = supportedTokensTypes;
     this.tokenProcessor = {
       ...tokenProcessor,
       [ExpressionTokenType.Unknown]: this.processUnknownChunk.bind(this),
     };
 
-    this.getType = this.getType.bind(this)
-    this.process = this.process.bind(this)
+    this.getType = this.getType.bind(this);
+    this.process = this.process.bind(this);
   }
 
   public process(token: TEnrichedExpression[number]): void {

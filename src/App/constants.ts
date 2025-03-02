@@ -1,6 +1,7 @@
-import { ErrorMessage, throwError } from '../../common/errors';
-import { isZero } from '../../common/utils';
-import { MathOperator } from './MathOperator';
+import { ErrorMessage, throwError } from '../shared/errors';
+
+import { isZero } from '../shared/validation';
+import { MathOperator } from '../shared/math/MathOperator';
 
 export const Operator = {
   Plus: new MathOperator({

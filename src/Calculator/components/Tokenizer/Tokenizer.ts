@@ -1,6 +1,6 @@
-import { TokenAccumulator } from '../common/components/TokenAccumulator';
-import { isStrictStringifiedNumber as isNumberChunk } from '../common/utils';
-import type { TTokenizedExpression } from './types';
+import { isStrictStringifiedNumber as isNumberChunk } from '../../../shared/validation';
+import { TokenAccumulator } from './TokenAccumulator';
+import type { TTokenizedExpression } from '../../types';
 
 export class Tokenizer {
   tokenizeExpression(expression: string): TTokenizedExpression {

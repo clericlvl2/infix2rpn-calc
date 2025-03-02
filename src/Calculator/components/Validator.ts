@@ -1,15 +1,15 @@
-import { ErrorMessage, throwError } from '../common/errors';
-import { isEmptyString, isString, regexEscape } from '../common/utils';
-import { Parenthesis } from './parentheses/constants';
-import { checkParentheses } from './parentheses/utils';
-import type { MathOperator } from './operators/MathOperator';
+import { ErrorMessage, throwError } from '../../shared/errors';
+import type { IMathOperator } from '../../shared/math/types';
+import { isEmptyString, isString } from '../../shared/validation';
+import { Parenthesis } from '../../shared/math/parentheses';
+import { regexEscape } from '../../shared/utils';
 
 interface ICalculatorOptions {
-  supportedOperators: MathOperator[],
+  supportedOperators: IMathOperator[],
 }
 
 export class Validator {
-  private supportedOperators: MathOperator[];
+  private supportedOperators: IMathOperator[];
   private allowedSymbolsRegex: RegExp;
 
   constructor({ supportedOperators }: ICalculatorOptions) {
@@ -36,7 +36,17 @@ export class Validator {
   };
 
   public checkParentheses(expression: string): void {
-    checkParentheses(expression);
+    const counter: Record<string, number> = {};
+
+    for (const chunk of expression) {
+      const chunkCounter = counter[chunk] ?? 0;
+
+      counter[chunk] = chunkCounter + 1;
+    }
+
+    if (counter[Parenthesis.Opening] !== counter[Parenthesis.Closing]) {
+      throwError(ErrorMessage.UnmatchedParentheses);
+    }
   };
 
   // TODO execute deep dive to regex to understand this code

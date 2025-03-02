@@ -1,30 +1,25 @@
-import { filterWhitespaces } from '../common/utils';
-import { MathOperator } from './operators/MathOperator';
-import type { OperatorRecognizer } from './operators/OperatorRecognizer';
-import { Validator } from './Validator';
-import { RPNCalculator } from './RPN/RPNCalculator';
-import { RPNConverter } from './RPN/RPNConverter';
-import type { Tokenizer } from './Tokenizer';
-import type { TTokenizedExpression } from './types';
+import type { IMathOperator } from '../shared/math/types';
+import { filterWhitespaces } from '../shared/utils';
+import { MathOperatorRecognizer } from './components/MathOperatorRecognizer/MathOperatorRecognizer';
+import { RPNCalculator } from './components/RPN/RPNCalculator';
+import { RPNConverter } from './components/RPN/RPNConverter';
+import { Tokenizer } from './components/Tokenizer/Tokenizer';
+import { Validator } from './components/Validator';
 
 interface ICalculatorOptions<Sign extends string> {
-  supportedOperators: MathOperator<Sign>[],
-  tokenizer: Tokenizer;
-  operatorRecognizer: OperatorRecognizer;
+  supportedOperators: IMathOperator<Sign>[];
 }
 
 export class Calculator<Sign extends string> {
-  private readonly supportedOperators: MathOperator<Sign>[];
   private validator: Validator;
   private tokenizer: Tokenizer;
-  private operatorRecognizer: OperatorRecognizer;
+  private operatorRecognizer: MathOperatorRecognizer;
   private rpnConverter: RPNConverter;
   private rpnCalculator: RPNCalculator;
 
-  constructor({ supportedOperators, operatorRecognizer, tokenizer }: ICalculatorOptions<Sign>) {
-    this.supportedOperators = supportedOperators;
-    this.tokenizer = tokenizer;
-    this.operatorRecognizer = operatorRecognizer;
+  constructor({ supportedOperators }: ICalculatorOptions<Sign>) {
+    this.tokenizer = new Tokenizer();
+    this.operatorRecognizer = new MathOperatorRecognizer({ supportedOperators: supportedOperators });
     this.validator = new Validator({ supportedOperators: supportedOperators });
     this.rpnConverter = new RPNConverter();
     this.rpnCalculator = new RPNCalculator();
@@ -34,17 +29,11 @@ export class Calculator<Sign extends string> {
     const filtered = this.filterWhitespaces(expression);
     const validated = this.validateExpression(filtered);
     const tokenized = this.tokenizer.tokenizeExpression(validated);
-    const recognized = this.recognizeOperators(tokenized);
+    const recognized = this.operatorRecognizer.recognize(tokenized);
 
     const rpnConverted = this.rpnConverter.convertToRPN(recognized);
 
     return this.rpnCalculator.calculate(rpnConverted);
-  }
-
-  private recognizeOperators(expression: TTokenizedExpression) {
-    const recognized = this.operatorRecognizer.recognizeOperators(expression);
-
-    return this.operatorRecognizer.enrichOperators(recognized, this.supportedOperators);
   }
 
   private filterWhitespaces(expression: string): string {

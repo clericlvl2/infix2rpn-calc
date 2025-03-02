@@ -1,6 +1,6 @@
 export enum ExpressionTokenType {
   Number,
   Operator,
-  Bracket,
+  Parenthesis,
   Unknown
 }
