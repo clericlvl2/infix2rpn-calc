@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@tailwind utilities;
 
 body {
   font-family: 'Courier New', monospace;

@@ -1,11 +1,10 @@
 import { defineConfig } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path';
-import autoprefixer from "autoprefixer";
 
 export default defineConfig({
   server: {
-    hmr: true, // Explicitly enable HMR
+    hmr: true,
   },
   resolve: {
     alias: {
@@ -16,6 +15,5 @@ export default defineConfig({
   },
   plugins: [
     tailwindcss(),
-    autoprefixer(),
   ],
 })
