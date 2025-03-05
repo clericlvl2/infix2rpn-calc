@@ -1,0 +1,32 @@
+name: Deploy to GitHub Pages  # Workflow name
+
+on:
+  push:
+    branches:
+      - main  # Run this workflow on pushes to the "main" branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4  # Clone the repo
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20  # Use Node.js 20
+          cache: npm  # Cache dependencies for faster builds
+
+      - name: Install dependencies
+        run: npm install  # Install project dependencies
+
+      - name: Build project
+        run: npm run build  # Build the project using Vite
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4  # Deploy to gh-pages branch
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}  # Auth token to push changes
+          publish_dir: ./dist  # Deploy the "dist" folder (Vite output)
