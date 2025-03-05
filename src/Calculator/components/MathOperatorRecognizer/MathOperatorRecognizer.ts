@@ -1,6 +1,6 @@
-import { ErrorMessage, throwError } from '../../../shared/errors';
-import { isOpeningParenthesis, isParenthesis, type TParentheses } from '../../../shared/math/parentheses';
-import type { IMathOperator } from '../../../shared/math/types';
+import { ErrorMessage, throwError } from '@shared/errors';
+import { isOpeningParenthesis, isParenthesis, type TParentheses } from '@shared/math/parentheses';
+import type { IMathOperator } from '@shared/math/types';
 import { isExist, isStrictStringifiedNumber as isNumber } from '../../../shared/validation';
 import type { TEnrichedExpression, TNumberToken, TOperand, TTokenizedExpression } from '../../types';
 import { RecognizedMathOperator } from './RecognizedMathOperator';

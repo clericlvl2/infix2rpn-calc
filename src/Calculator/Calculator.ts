@@ -1,5 +1,5 @@
-import type { IMathOperator } from '../shared/math/types';
-import { filterWhitespaces } from '../shared/utils';
+import type { IMathOperator } from '@shared/math/types';
+import { filterWhitespaces } from '@shared/utils';
 import { MathOperatorRecognizer } from './components/MathOperatorRecognizer/MathOperatorRecognizer';
 import { RPNCalculator } from './components/RPN/RPNCalculator';
 import { RPNConverter } from './components/RPN/RPNConverter';
@@ -31,9 +31,16 @@ export class Calculator<Sign extends string> {
     const tokenized = this.tokenizer.tokenizeExpression(validated);
     const recognized = this.operatorRecognizer.recognize(tokenized);
 
-    const rpnConverted = this.rpnConverter.convertToRPN(recognized);
+    this.resetRPN();
+
+    const rpnConverted = this.rpnConverter.convert(recognized);
 
     return this.rpnCalculator.calculate(rpnConverted);
+  }
+
+  private resetRPN() {
+    this.rpnConverter.reset();
+    this.rpnCalculator.reset();
   }
 
   private filterWhitespaces(expression: string): string {

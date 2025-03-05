@@ -1,10 +1,10 @@
-import { isEmptyString } from '../../../shared/validation';
+import { isEmptyString } from '@shared/validation';
 
 export class TokenAccumulator {
   private accumulator: string[] = [];
 
   add(chunk: string) {
-    this.accumulator.push(chunk);
+    this.accumulator.push(String(chunk));
   }
 
   collect(): string {

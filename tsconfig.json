@@ -5,17 +5,25 @@
     "esModuleInterop": true,
     "module": "ESNext",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
-
-    /* Bundler mode */
     "moduleResolution": "bundler",
     "isolatedModules": true,
     "moduleDetection": "force",
     "noEmit": true,
-
-    /* Linting */
     "strict": true,
     "noUncheckedSideEffectImports": true,
     "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "baseUrl": "./",
+    "paths": {
+      "react": ["./node_modules/preact/compat/"],
+      "react/jsx-runtime": ["./node_modules/preact/jsx-runtime"],
+      "react-dom": ["./node_modules/preact/compat/"],
+      "react-dom/*": ["./node_modules/preact/compat/*"],
+      "@App/*": ["./src/App/*"],
+      "@Calculator/*": ["./src/Calculator/*"],
+      "@shared/*": ["./src/shared/*"]
+    }
   },
-  "include": ["src"],
+  "include": ["src", "global.d.ts"]
 }

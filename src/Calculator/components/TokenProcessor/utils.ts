@@ -1,5 +1,5 @@
-import { isParenthesis, type TParentheses } from '../../../shared/math/parentheses';
-import type { IMathOperator } from '../../../shared/math/types';
+import { isParenthesis, type TParentheses } from '@shared/math/parentheses';
+import type { IMathOperator } from '@shared/math/types';
 import { isStrictStringifiedNumber as isNumber } from '../../../shared/validation';
 import type { TNumberToken } from '../../types';
 

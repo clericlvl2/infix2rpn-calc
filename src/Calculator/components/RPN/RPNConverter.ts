@@ -1,11 +1,7 @@
-import { Stack } from '../../../shared/components/Stack';
-import { isExist } from '../../../shared/validation';
-import type { IMathOperator } from '../../../shared/math/types';
-import {
-  isOpeningParenthesis,
-  isParenthesis,
-  type TParentheses,
-} from '../../../shared/math/parentheses';
+import { Stack } from '@shared/components/Stack';
+import { isOpeningParenthesis, isParenthesis, type TParentheses } from '@shared/math/parentheses';
+import type { IMathOperator } from '@shared/math/types';
+import { isExist } from '@shared/validation';
 import type { TEnrichedExpression, TNumberToken } from '../../types';
 import { ExpressionTokenType } from '../TokenProcessor/enums';
 import { TokenProcessor } from '../TokenProcessor/TokenProcessor';
@@ -34,12 +30,17 @@ export class RPNConverter {
     });
   }
 
-  public convertToRPN(tokenizedExpression: TEnrichedExpression): (TNumberToken | IMathOperator)[] {
+  public convert(tokenizedExpression: TEnrichedExpression): (TNumberToken | IMathOperator)[] {
     const converted = this.getConvertedExpression(tokenizedExpression);
 
-    this.resetConverter();
+    this.reset();
 
     return converted;
+  }
+
+  public reset(): void {
+    this.notation = [];
+    this.operatorsStack.clear();
   }
 
   private getConvertedExpression(tokenizedExpression: TEnrichedExpression): (TNumberToken | IMathOperator)[] {
@@ -76,11 +77,6 @@ export class RPNConverter {
       this.notation.push(token);
       token = this.operatorsStack.pop();
     }
-  }
-
-  private resetConverter(): void {
-    this.notation = [];
-    this.operatorsStack.clear();
   }
 
   private getStackItemPrecedence(item: TParentheses | IMathOperator | undefined): number {

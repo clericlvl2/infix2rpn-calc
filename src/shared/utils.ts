@@ -4,6 +4,6 @@ export const filterWhitespaces = (str: string): string => {
   return str.replace(WHITE_SPACES_REGEX, '');
 };
 
-export const regexEscape = (string: string) => {
+export const regexEscape = (string: string): string => {
   return string.replace(/[-\]\[.*+?^${}()|/]/g, '\\$&');
 };

@@ -1,6 +1,6 @@
-import { Stack } from '../../../shared/components/Stack';
-import { ErrorMessage, throwError } from '../../../shared/errors';
-import type { IMathOperator } from '../../../shared/math/types';
+import { Stack } from '@shared/components/Stack';
+import { ErrorMessage, throwError } from '@shared/errors';
+import type { IMathOperator } from '@shared/math/types';
 
 import type { TEnrichedExpression, TNumberToken } from '../../types';
 import { ExpressionTokenType } from '../TokenProcessor/enums';
@@ -27,24 +27,25 @@ export class RPNCalculator {
 
   public calculate(expression: TEnrichedExpression): number {
     this.initExpressionCalc(expression);
+    const result = this.stack.pop() as number;
 
-    return this.getStackItemIfLast();
+    this.checkStack();
+
+    return result;
+  }
+
+  public reset() {
+    this.stack.clear();
   }
 
   private initExpressionCalc(expression: TEnrichedExpression): void {
     expression.forEach(this.tokenProcessor.process);
   }
 
-  private checkStackLastItem(): void {
-    if (this.stack.size() !== 1) {
+  private checkStack(): void {
+    if (this.stack.size()) {
       throwError(ErrorMessage.CalculationError);
     }
-  }
-
-  private getStackItemIfLast(): number {
-    this.checkStackLastItem();
-
-    return this.stack.pop() as number;
   }
 
   private processToken(chunk: TNumberToken) {

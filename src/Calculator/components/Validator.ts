@@ -1,8 +1,8 @@
-import { ErrorMessage, throwError } from '../../shared/errors';
-import type { IMathOperator } from '../../shared/math/types';
-import { isEmptyString, isString } from '../../shared/validation';
-import { Parenthesis } from '../../shared/math/parentheses';
-import { regexEscape } from '../../shared/utils';
+import { ErrorMessage, throwError } from '@shared/errors';
+import type { IMathOperator } from '@shared/math/types';
+import { isEmptyString, isString } from '@shared/validation';
+import { Parenthesis } from '@shared/math/parentheses';
+import { regexEscape } from '@shared/utils';
 
 interface ICalculatorOptions {
   supportedOperators: IMathOperator[],
@@ -35,16 +35,22 @@ export class Validator {
     }
   };
 
+  private getCount(counter: Record<string, number>, chunk: string): number {
+    return counter[chunk] ?? 0;
+  }
+
   public checkParentheses(expression: string): void {
     const counter: Record<string, number> = {};
 
     for (const chunk of expression) {
-      const chunkCounter = counter[chunk] ?? 0;
+      if (this.getCount(counter, Parenthesis.Closing) > this.getCount(counter, Parenthesis.Opening)) {
+        throwError(ErrorMessage.UnmatchedParentheses);
+      }
 
-      counter[chunk] = chunkCounter + 1;
+      counter[chunk] = this.getCount(counter, chunk) + 1;
     }
 
-    if (counter[Parenthesis.Opening] !== counter[Parenthesis.Closing]) {
+    if (this.getCount(counter, Parenthesis.Closing) !== this.getCount(counter, Parenthesis.Opening)) {
       throwError(ErrorMessage.UnmatchedParentheses);
     }
   };
