@@ -6,6 +6,7 @@ export default defineConfig({
   server: {
     hmr: true,
   },
+  base: '/rpn-calculator/',
   resolve: {
     alias: {
       '@App': path.resolve(__dirname, './src/App'),
