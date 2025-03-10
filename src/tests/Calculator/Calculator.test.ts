@@ -10,7 +10,7 @@ import type { IMathOperator } from '@shared/math/types';
  * - check invalid operators combinations
  * - check missing operands
  */
-describe('Infix Calculator using RPN', () => {
+describe('Infix Calculator using ReversePolishNotation', () => {
   const OPERATORS = [Operator.Plus, Operator.Minus, Operator.Multiply, Operator.Divide, Operator.UnaryMinus];
 
   const calculator = new Calculator({ supportedOperators: OPERATORS });

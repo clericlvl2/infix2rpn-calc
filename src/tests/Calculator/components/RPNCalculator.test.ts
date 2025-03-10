@@ -1,4 +1,4 @@
-import { RPNCalculator } from '@Calculator/components/RPN/RPNCalculator';
+import { RPNCalculator } from '@Calculator/components/ReversePolishNotation/RPNCalculator';
 import { ExpressionTokenType } from '@Calculator/components/TokenProcessor/enums';
 import { TokenProcessor } from '@Calculator/components/TokenProcessor/TokenProcessor';
 import { Stack } from '@shared/components/Stack';

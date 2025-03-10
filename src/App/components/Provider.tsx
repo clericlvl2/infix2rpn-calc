@@ -1,53 +1,58 @@
 import { signal } from '@preact/signals';
 import type { IMathOperator } from '@shared/math/types';
-import { CalculatorContext, CalculatorContextType, DEFAULT_OPERATORS, initCalculator } from './context';
 import { ComponentChildren } from 'preact';
+import { CalculatorContext, ICalculatorContextType, DEFAULT_OPERATORS, initCalculator } from './context';
 
-interface CalculatorProviderProps {
+interface ICalculatorProviderProps {
   children: ComponentChildren;
 }
 
-export const CalculatorProvider = ({ children }: CalculatorProviderProps) => {
-  const display = signal('');
+export const CalculatorProvider = ({ children }: ICalculatorProviderProps) => {
+  const expression = signal('');
   const result = signal('');
   const error = signal('');
   const operators = signal<IMathOperator[]>(DEFAULT_OPERATORS);
   const calculator = signal(initCalculator(DEFAULT_OPERATORS));
 
-  const addToDisplay = (value: string) => {
-    display.value += value;
+  const addToExpression = (value: string) => {
+    expression.value += value;
+  };
+
+  const setExpression = (value: string) => {
+    expression.value = value;
   };
 
   const calculate = () => {
     try {
-      const calculatedResult = calculator.value.calculate(display.value);
-      display.value = String(calculatedResult);
+      const calculatedResult = calculator.value.calculate(expression.value);
+      expression.value = String(calculatedResult);
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Error';
     }
   };
 
-  const setOperatorSet = (operatorSet: IMathOperator[]) => {
+  const setOperatorsSet = (operatorSet: IMathOperator[]) => {
     operators.value = operatorSet;
     calculator.value = initCalculator(operatorSet);
   };
 
-  const clear = () => {
-    display.value = '';
+  const clearExpression = () => {
+    expression.value = '';
     result.value = '';
-    error.value = ''
+    error.value = '';
   };
 
-  const contextValue: CalculatorContextType = {
-    display,
-    result,
+  const contextValue: ICalculatorContextType = {
+    expression: expression,
+    calculationResult: result,
     error,
     operators,
     calculator,
-    addToDisplay,
-    clear,
+    addToExpression,
+    setExpression,
+    clearExpression,
     calculate,
-    setOperatorSet
+    setOperatorsSet,
   };
 
   return (

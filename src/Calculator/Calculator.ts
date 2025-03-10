@@ -1,8 +1,8 @@
 import type { IMathOperator } from '@shared/math/types';
 import { filterWhitespaces } from '@shared/utils';
 import { MathOperatorRecognizer } from './components/MathOperatorRecognizer/MathOperatorRecognizer';
-import { RPNCalculator } from './components/RPN/RPNCalculator';
-import { RPNConverter } from './components/RPN/RPNConverter';
+import { RPNCalculator } from '@Calculator/components/ReversePolishNotation/RPNCalculator';
+import { RPNConverter } from '@Calculator/components/ReversePolishNotation/RPNConverter';
 import { Tokenizer } from './components/Tokenizer/Tokenizer';
 import { Validator } from './components/Validator';
 

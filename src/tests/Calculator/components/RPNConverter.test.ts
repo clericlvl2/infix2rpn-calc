@@ -1,4 +1,4 @@
-import { RPNConverter } from '@Calculator/components/RPN/RPNConverter';
+import { RPNConverter } from '@Calculator/components/ReversePolishNotation/RPNConverter';
 import { IMathOperator } from '@shared/math/types';
 import { TEnrichedExpression } from '@Calculator/types';
 
