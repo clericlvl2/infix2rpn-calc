@@ -3,6 +3,8 @@
 A simple, visually appealing calculator built using modern frontend technologies.
 Calculation algorithm is based on [reverse polish notation](https://en.wikipedia.org/wiki/Shunting_yard_algorithm)
 
+https://clericlvl2.github.io/rpn-calculator/
+
 ## Features
 - Basic arithmetic operations: Addition, Subtraction, Multiplication, Division
 - Clear button to reset calculations
@@ -39,11 +41,11 @@ Calculation algorithm is based on [reverse polish notation](https://en.wikipedia
 
 ## Plans
 
-- Add more calculator features
+- Calculator features:
   - Add different associativity support (5!, for example)
   - Add multi-symbols named operators (sqrt, sin, etc.)
-  - Add di for app components
-- Add more UI features
-  - Operators picker (unary operators enabled by default)
-  - Operators creator
-  - Themes picker
+  - Track keyboard input with non-focused calculator input field
+- UI:
+  - Add visible informer about project, explain why it is cool
+  - Add different operators sets (simple and engeneering)
+  - Add theme picker
