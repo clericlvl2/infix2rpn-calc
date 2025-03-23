@@ -46,8 +46,12 @@ https://clericlvl2.github.io/rpn-calculator/
   - Add different associativity support (5!, for example)
   - Add multi-symbols named operators (sqrt, sin, etc.)
   - Track keyboard input with non-focused calculator input field
+  - Refactor Tokenizator, add different token types
 - UI:
   - Add visible informer about project, explain why it is cool
   - Add different operators sets (simple and engeneering)
   - Add theme picker
+- Fix
   - Adjust input scroll behaviour on backspace
+  - Restrict validation policy (1--1)
+  - Fix parenthesys problem "()"
