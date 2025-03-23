@@ -1,5 +1,6 @@
 export const ErrorMessage = {
   Invalid: 'Expression is invalid',
+  EmptyExpression: 'Expression is empty',
   NotAllowedSymbols: 'Expression has not allowed symbols',
   IncorrectUnaryOperator: 'Invalid unary operator found',
   HasNotSupportedOperators: 'Expression has not supported operators',

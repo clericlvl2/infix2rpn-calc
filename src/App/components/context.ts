@@ -14,6 +14,7 @@ export interface ICalculatorContextType {
   setExpression: (value: string) => void;
   clearExpression: () => void;
   calculate: () => void;
+  backspace: () => void;
   setOperatorsSet: (operatorSet: IMathOperator[]) => void;
 }
 
@@ -39,6 +40,7 @@ export const CalculatorContext = createContext<ICalculatorContextType>({
   addToExpression: () => {},
   setExpression: () => {},
   clearExpression: () => {},
+  backspace: () => {},
   calculate: () => {},
   setOperatorsSet: () => {},
 });

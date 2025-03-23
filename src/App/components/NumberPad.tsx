@@ -1,18 +1,28 @@
 import { useContext } from 'preact/hooks';
-import { ClearButton, ResultButton } from './Button';
+import { BackspaceButton, ClearButton, ResultButton } from './Button';
 import { CalculatorContext } from './context';
 import { useNumberButtons, useOperatorsButtons } from './useButtons';
 
 export const NumberPad = () => {
-  const { calculate, clearExpression } = useContext(CalculatorContext);
+  const { calculate, clearExpression, backspace } = useContext(CalculatorContext);
   const numberButtons = useNumberButtons();
   const operatorsButtons = useOperatorsButtons();
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex gap-4">
-        <ClearButton onClick={clearExpression}/>
-        <ResultButton onClick={calculate}/>
+      <div className="grid gap-4 grid-cols-4">
+        <ClearButton
+          className="col-span-1"
+          onClick={clearExpression}
+        />
+        <ResultButton
+          onClick={calculate}
+          className="col-span-2"
+        />
+        <BackspaceButton
+          onClick={backspace}
+          className="col-span-1"
+        />
       </div>
 
       <div className="grid grid-cols-4 gap-4">

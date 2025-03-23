@@ -42,6 +42,14 @@ export const CalculatorProvider = ({ children }: ICalculatorProviderProps) => {
     error.value = '';
   };
 
+  const backspace = () => {
+    const value = expression.value;
+
+    if (value.length > 0) {
+      expression.value = value.slice(0, value.length - 1);
+    }
+  };
+
   const contextValue: ICalculatorContextType = {
     expression: expression,
     calculationResult: result,
@@ -52,6 +60,7 @@ export const CalculatorProvider = ({ children }: ICalculatorProviderProps) => {
     setExpression,
     clearExpression,
     calculate,
+    backspace,
     setOperatorsSet,
   };
 

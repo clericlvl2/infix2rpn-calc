@@ -47,23 +47,44 @@ export const Button = ({
 
 interface ISimpleButtonProps {
   onClick: IButtonProps['onClick'];
+  className?: IButtonProps['className'];
 }
 
-export const ClearButton = ({ onClick }: ISimpleButtonProps) => (
+export const ClearButton = ({
+  onClick,
+  className
+}: ISimpleButtonProps) => (
   <Button
     onClick={onClick}
-    className="grow"
+    className={clsx('grow', className)}
     variant="clear"
   >
     C
   </Button>
 );
-export const ResultButton = ({ onClick }: ISimpleButtonProps) => (
+
+export const ResultButton = ({
+  onClick,
+  className
+}: ISimpleButtonProps) => (
   <Button
     onClick={onClick}
-    className="grow"
+    className={clsx('grow', className)}
     variant="equal"
   >
     =
+  </Button>
+);
+
+export const BackspaceButton = ({
+  onClick,
+  className
+}: ISimpleButtonProps) => (
+  <Button
+    onClick={onClick}
+    className={clsx('grow', className)}
+    variant="clear"
+  >
+    {`<`}
   </Button>
 );

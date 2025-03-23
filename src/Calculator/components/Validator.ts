@@ -25,7 +25,7 @@ export class Validator {
 
   public checkEmptyString(expression: string): void {
     if (isEmptyString(expression)) {
-      throwError(ErrorMessage.Invalid);
+      throwError(ErrorMessage.EmptyExpression);
     }
   };
 
@@ -55,7 +55,6 @@ export class Validator {
     }
   };
 
-  // TODO execute deep dive to regex to understand this code
   private createAllowedSymbolsRegex(): RegExp {
     const allowedNumbers = '0-9\\.';
     const allowedParentheses = `${regexEscape(Parenthesis.Opening)}${regexEscape(Parenthesis.Closing)}`;

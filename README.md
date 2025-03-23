@@ -35,6 +35,7 @@ Calculation algorithm is based on [reverse polish notation](https://en.wikipedia
 - Click on the numeric buttons to enter values.
 - Use the operators (`+`, `-`, `*`, `/`) to perform calculations.
 - Press `=` to get the result.
+- Click `<` to remove last symbol
 - Click `C` to clear the input and start fresh.
 
 ## Plans
@@ -47,3 +48,4 @@ Calculation algorithm is based on [reverse polish notation](https://en.wikipedia
   - Operators picker (unary operators enabled by default)
   - Operators creator
   - Themes picker
+  - Adjust input scroll behaviour on backspace
