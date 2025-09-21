@@ -1,6 +1,6 @@
-import { Stack } from '@shared/components/Stack';
-import { ErrorMessage, throwError } from '@shared/errors';
-import type { IMathOperator } from '@shared/math/types';
+import { Stack } from '@lib/data/Stack';
+import { ErrorMessage, throwError } from '@lib/errors';
+import type { IMathOperator } from '@lib/math/types';
 
 import type { TEnrichedExpression, TNumberToken } from '../../types';
 import { ExpressionTokenType } from '../TokenProcessor/enums';

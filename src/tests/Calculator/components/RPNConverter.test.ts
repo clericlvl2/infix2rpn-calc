@@ -1,5 +1,5 @@
 import { RPNConverter } from '@Calculator/components/ReversePolishNotation/RPNConverter';
-import { IMathOperator } from '@shared/math/types';
+import { IMathOperator } from '@lib/math/types';
 import { TEnrichedExpression } from '@Calculator/types';
 
 const MOCK_PLUS: IMathOperator = {

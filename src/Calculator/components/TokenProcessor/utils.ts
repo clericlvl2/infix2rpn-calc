@@ -1,6 +1,6 @@
-import { isParenthesis, type TParentheses } from '@shared/math/parentheses';
-import type { IMathOperator } from '@shared/math/types';
-import { isStrictStringifiedNumber as isNumber } from '../../../shared/validation';
+import { isParenthesis, type TParentheses } from '@lib/math/parentheses';
+import type { IMathOperator } from '@lib/math/types';
+import { isStrictStringifiedNumber as isNumber } from '@lib/validation';
 import type { TNumberToken } from '../../types';
 
 export const isNumberToken = (chunk: TNumberToken | unknown): chunk is TNumberToken => isNumber(chunk);

@@ -1,5 +1,5 @@
 import { Tokenizer } from '@Calculator/components/Tokenizer/Tokenizer';
-import * as ValidationModule from '../../../shared/validation';
+import * as ValidationModule from '@lib/validation';
 
 describe('Tokenizer', () => {
   let tokenizer: Tokenizer;

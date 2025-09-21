@@ -1,5 +1,5 @@
-import { Stack } from '@shared/components/Stack';
-import { isExist } from '@shared/validation';
+import { Stack } from '@lib/data/Stack';
+import { isExist } from '@lib/validation';
 
 describe('Stack', () => {
   describe('Initialization', () => {

@@ -11,7 +11,7 @@ export default defineConfig({
     alias: {
       '@App': path.resolve(__dirname, './src/App'),
       '@Calculator': path.resolve(__dirname, './src/Calculator'),
-      '@shared': path.resolve(__dirname, './src/shared')
+      '@lib': path.resolve(__dirname, './src/lib')
     }
   },
   plugins: [

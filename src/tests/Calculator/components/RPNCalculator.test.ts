@@ -1,11 +1,11 @@
 import { RPNCalculator } from '@Calculator/components/ReversePolishNotation/RPNCalculator';
 import { ExpressionTokenType } from '@Calculator/components/TokenProcessor/enums';
 import { TokenProcessor } from '@Calculator/components/TokenProcessor/TokenProcessor';
-import { Stack } from '@shared/components/Stack';
-import { ErrorMessage } from '@shared/errors';
-import type { IMathOperator } from '@shared/math/types';
+import { Stack } from '@lib/data/Stack';
+import { ErrorMessage } from '@lib/errors';
+import type { IMathOperator } from '@lib/math/types';
 
-jest.mock('../../../shared/components/Stack', () => {
+jest.mock('../../../lib/data/Stack', () => {
   return {
     Stack: jest.fn().mockImplementation(() => ({
       size: jest.fn(),
@@ -16,7 +16,7 @@ jest.mock('../../../shared/components/Stack', () => {
   };
 });
 
-jest.mock('../../../shared/errors', () => ({
+jest.mock('../../../lib/errors', () => ({
   ErrorMessage: {
     CalculationError: 'Calculation error',
   },

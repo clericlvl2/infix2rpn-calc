@@ -1,4 +1,4 @@
-import { isEmptyString } from '@shared/validation';
+import { isEmptyString } from '@lib/validation';
 
 export class TokenAccumulator {
   private accumulator: string[] = [];

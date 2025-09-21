@@ -1,5 +1,5 @@
 import { signal } from '@preact/signals';
-import type { IMathOperator } from '@shared/math/types';
+import type { IMathOperator } from '@lib/math/types';
 import { ComponentChildren } from 'preact';
 import { CalculatorContext, ICalculatorContextType, DEFAULT_OPERATORS, initCalculator } from './context';
 

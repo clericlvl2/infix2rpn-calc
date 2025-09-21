@@ -1,6 +1,6 @@
 import { Calculator } from '@Calculator/Calculator';
 import { Signal, signal } from '@preact/signals';
-import type { IMathOperator } from '@shared/math/types';
+import type { IMathOperator } from '@lib/math/types';
 import { createContext } from 'preact';
 import { Operator } from '../constants';
 

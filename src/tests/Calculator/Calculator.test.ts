@@ -1,7 +1,7 @@
 import { Operator } from '@App/constants';
 import { Calculator } from '@Calculator/Calculator';
-import { ErrorMessage } from '@shared/errors';
-import type { IMathOperator } from '@shared/math/types';
+import { ErrorMessage } from '@lib/errors';
+import type { IMathOperator } from '@lib/math/types';
 
 /**
  * Calculator is not able to:

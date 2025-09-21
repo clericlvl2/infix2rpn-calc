@@ -1,8 +1,8 @@
-import { ErrorMessage, throwError } from '@shared/errors';
-import type { IMathOperator } from '@shared/math/types';
-import { isEmptyString, isString } from '@shared/validation';
-import { Parenthesis } from '@shared/math/parentheses';
-import { regexEscape } from '@shared/utils';
+import { ErrorMessage, throwError } from '@lib/errors';
+import type { IMathOperator } from '@lib/math/types';
+import { isEmptyString, isString } from '@lib/validation';
+import { Parenthesis } from '@lib/math/parentheses';
+import { regexEscape } from '@lib/utils';
 
 interface ICalculatorOptions {
   supportedOperators: IMathOperator[],

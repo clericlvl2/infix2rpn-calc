@@ -22,7 +22,7 @@
       "react-dom/*": ["./node_modules/preact/compat/*"],
       "@App/*": ["./src/App/*"],
       "@Calculator/*": ["./src/Calculator/*"],
-      "@shared/*": ["./src/shared/*"]
+      "@lib/*": ["./src/lib/*"]
     }
   },
   "include": ["src", "global.d.ts"]

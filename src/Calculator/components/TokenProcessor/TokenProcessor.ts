@@ -1,4 +1,4 @@
-import { ErrorMessage, throwError } from '@shared/errors';
+import { ErrorMessage, throwError } from '@lib/errors';
 import type { TEnrichedExpression } from '../../types';
 import { ExpressionTokenType } from './enums';
 import { isNumberToken, isOperatorToken, isParenthesisToken } from './utils';

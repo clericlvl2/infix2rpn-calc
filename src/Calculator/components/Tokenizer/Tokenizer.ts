@@ -1,4 +1,4 @@
-import { isStrictStringifiedNumber as isNumberChunk } from '../../../shared/validation';
+import { isStrictStringifiedNumber as isNumberChunk } from '@lib/validation';
 import type { TTokenizedExpression } from '../../types';
 import { TokenAccumulator } from './TokenAccumulator';
 

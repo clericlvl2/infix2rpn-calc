@@ -1,5 +1,5 @@
-import type { TParentheses } from '@shared/math/parentheses';
-import type { IMathOperator } from '@shared/math/types';
+import type { TParentheses } from '@lib/math/parentheses';
+import type { IMathOperator } from '@lib/math/types';
 
 export type TUnrecognizedOperator = string
 export type TNumberToken = string;

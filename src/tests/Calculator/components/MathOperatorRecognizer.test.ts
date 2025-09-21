@@ -1,7 +1,7 @@
 import { MathOperatorRecognizer } from '@Calculator/components/MathOperatorRecognizer/MathOperatorRecognizer';
 import type { TTokenizedExpression } from '@Calculator/types';
-import { ErrorMessage } from '@shared/errors';
-import type { IMathOperator } from '@shared/math/types';
+import { ErrorMessage } from '@lib/errors';
+import type { IMathOperator } from '@lib/math/types';
 
 describe('MathOperatorRecognizer', () => {
   const safelyGetArity = (val: string | IMathOperator): number => {

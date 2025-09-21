@@ -1,5 +1,5 @@
-import type { IMathOperator } from '@shared/math/types';
-import { filterWhitespaces } from '@shared/utils';
+import type { IMathOperator } from '@lib/math/types';
+import { filterWhitespaces } from '@lib/utils';
 import { MathOperatorRecognizer } from './components/MathOperatorRecognizer/MathOperatorRecognizer';
 import { RPNCalculator } from '@Calculator/components/ReversePolishNotation/RPNCalculator';
 import { RPNConverter } from '@Calculator/components/ReversePolishNotation/RPNConverter';

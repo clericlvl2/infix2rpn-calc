@@ -1,7 +1,7 @@
-import { Stack } from '@shared/components/Stack';
-import { isOpeningParenthesis, isParenthesis, type TParentheses } from '@shared/math/parentheses';
-import type { IMathOperator } from '@shared/math/types';
-import { isExist } from '@shared/validation';
+import { Stack } from '@lib/data/Stack';
+import { isOpeningParenthesis, isParenthesis, type TParentheses } from '@lib/math/parentheses';
+import type { IMathOperator } from '@lib/math/types';
+import { isExist } from '@lib/validation';
 import type { TEnrichedExpression, TNumberToken } from '../../types';
 import { ExpressionTokenType } from '../TokenProcessor/enums';
 import { TokenProcessor } from '../TokenProcessor/TokenProcessor';

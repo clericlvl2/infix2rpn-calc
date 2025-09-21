@@ -1,5 +1,5 @@
 import { Validator } from '@Calculator/components/Validator';
-import { ErrorMessage } from '@shared/errors';
+import { ErrorMessage } from '@lib/errors';
 
 describe('Validator', () => {
   const sampleOperators = [
@@ -27,7 +27,7 @@ describe('Validator', () => {
       const regexEscapeSpy = jest.spyOn<
         { regexEscape: (string: string) => string },
         'regexEscape'
-      >(require('../../../shared/utils'), 'regexEscape');
+      >(require('../../../lib/utils'), 'regexEscape');
 
       new Validator({ supportedOperators: sampleOperators });
 
