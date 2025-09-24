@@ -1,32 +1,81 @@
-import { isStrictStringifiedNumber as isNumberChunk } from '@lib/validation';
-import type { TTokenizedExpression } from '../../types';
-import { TokenAccumulator } from './TokenAccumulator';
+import {TokenBuffer} from './TokenBuffer';
+import {createToken, determineTokenType, isOperator} from "@Calculator/components/Tokenizer/utils";
+import {ErrorMessage} from "@lib/errors";
+import {
+  IExpressionToken,
+  INumberToken,
+  IRawOperationToken,
+  TExpressionTokenType,
+  Token,
+  TokenType
+} from "@Calculator/components/Tokenizer/model";
+import {isParenthesis, TParentheses} from "@lib/math/parentheses";
+import {isStrictStringifiedNumber} from "@lib/validation";
 
 export class Tokenizer {
-  tokenizeExpression(expression: string): TTokenizedExpression {
-    const tokenized: string[] = [];
-    const numberTokenAccumulator = new TokenAccumulator();
+  private tokenBuffer = new TokenBuffer();
+  private tokenBufferType: TExpressionTokenType | null = null;
 
-    for (const chunk of expression) {
-      if (this.isEmptyChunk(chunk)) {
+  public tokenize(input: string): Token[] {
+    const tokenizedExpression: Token[] = [];
+
+    for (let i = 0; i < input.length; i++) {
+      const chunk = input[i];
+      const chunkType = determineTokenType(chunk);
+
+      const hasNextChunk = i + 1 < input.length;
+      const isEmptyChunk = !chunk.trim().length;
+      const isParenthesisChunkType = chunkType === TokenType.Parenthesis;
+      const isChunkTypeDiffersFromBuffer = this.isBufferExist() && this.tokenBufferType !== chunkType
+
+      if (isEmptyChunk) {
         continue;
       }
 
-      if (isNumberChunk(chunk)) {
-        numberTokenAccumulator.add(chunk);
-        continue;
+      if (!this.isValidChunkType(chunkType)) {
+        throw new Error(ErrorMessage.NotAllowedSymbols);
       }
 
-      numberTokenAccumulator.collectTo(tokenized);
-      tokenized.push(chunk);
+      if (isChunkTypeDiffersFromBuffer) {
+        const token = this.collectTokenAndClearBuffer();
+
+        tokenizedExpression.push(token);
+      }
+
+      this.tokenBuffer.add(chunk);
+      this.tokenBufferType = chunkType;
+
+      if (isParenthesisChunkType || !hasNextChunk) {
+        const token = this.collectTokenAndClearBuffer();
+
+        tokenizedExpression.push(token);
+      }
     }
 
-    numberTokenAccumulator.collectTo(tokenized);
-
-    return tokenized;
+    return tokenizedExpression;
   }
 
-  private isEmptyChunk(chunk: string) {
-    return chunk.trim().length === 0;
+  private isValidChunkType(chunkType: TokenType | null ): chunkType is TExpressionTokenType {
+    return chunkType !== null && chunkType !== TokenType.Unknown;
+  }
+
+  private collectTokenAndClearBuffer(): Readonly<IExpressionToken> {
+    if (!this.isValidChunkType(this.tokenBufferType)) {
+      throw new Error(ErrorMessage.NotAllowedSymbols);
+    }
+
+    const token = createToken<IExpressionToken>({
+      value: this.tokenBuffer.collect(),
+      type: this.tokenBufferType
+    });
+
+    this.tokenBuffer.clear();
+    this.tokenBufferType = null;
+
+    return token;
+  }
+
+  private isBufferExist() {
+    return this.tokenBuffer.size() && this.tokenBufferType !== null;
   }
 }

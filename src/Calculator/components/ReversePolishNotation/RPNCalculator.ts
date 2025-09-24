@@ -1,35 +1,20 @@
-import { Stack } from '@lib/data/Stack';
-import { ErrorMessage, throwError } from '@lib/errors';
-import type { IMathOperator } from '@lib/math/types';
-
-import type { TEnrichedExpression, TNumberToken } from '../../types';
-import { ExpressionTokenType } from '../TokenProcessor/enums';
-import { TokenProcessor } from '../TokenProcessor/TokenProcessor';
+import {Stack} from '@lib/data/Stack';
+import {ErrorMessage} from '@lib/errors';
+import {Token, TokenType} from "@Calculator/components/Tokenizer/model";
+import {IOperation} from "@lib/math/operation/model";
 
 export class RPNCalculator {
-  private stack: Stack<number>;
-  private tokenProcessor: TokenProcessor;
-
-  constructor() {
-    this.stack = new Stack<number>();
-
-    this.tokenProcessor = new TokenProcessor({
-      supportedTokensTypes: [
-        ExpressionTokenType.Number,
-        ExpressionTokenType.Operator,
-      ],
-      tokenProcessor: {
-        [ExpressionTokenType.Number]: this.processToken.bind(this),
-        [ExpressionTokenType.Operator]: this.processOperator.bind(this),
-      },
-    });
+  private stack = new Stack<number>();
+  private tokenProcessor = {
+    [TokenType.Number]: this.processNumberToken,
+    [TokenType.Operation]: this.processOperationToken,
   }
 
-  public calculate(expression: TEnrichedExpression): number {
+  public calculate(expression: Token[]): number {
     this.initExpressionCalc(expression);
     const result = this.stack.pop() as number;
 
-    this.checkStack();
+    this.checkEmptyCalculationStack();
 
     return result;
   }
@@ -38,28 +23,36 @@ export class RPNCalculator {
     this.stack.clear();
   }
 
-  private initExpressionCalc(expression: TEnrichedExpression): void {
-    expression.forEach(this.tokenProcessor.process);
+  private initExpressionCalc(expression: Token[]): void {
+    expression.forEach(token => {
+      // todo этого быть не должно, нужна типизация
+      if (token.type === TokenType.Parenthesis) {
+        return;
+      }
+
+      this.tokenProcessor[token.type]?.(token)
+    });
   }
 
-  private checkStack(): void {
+  private checkEmptyCalculationStack(): void {
     if (this.stack.size()) {
-      throwError(ErrorMessage.CalculationError);
+      throw new Error(ErrorMessage.CalculationError);
     }
   }
 
-  private processToken(chunk: TNumberToken) {
-    const token = parseFloat(chunk);
+  private processNumberToken(nToken: Token) {
+    const nValue = parseFloat(nToken.value);
 
-    this.stack.push(token);
+    this.stack.push(nValue);
   }
 
-  private processOperator(mathOperator: IMathOperator) {
+  private processOperationToken(oToken: Token) {
     const actionParameters: number[] = [];
+    const operator = oToken.value as IOperation;
 
-    this.stack.popTo(actionParameters, mathOperator.arity);
+    this.stack.popTo(actionParameters, operator.arity);
 
-    const actionResult = mathOperator.action(...actionParameters.reverse());
+    const actionResult = operator.action(...actionParameters.reverse());
 
     this.stack.push(actionResult);
   }

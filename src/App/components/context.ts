@@ -1,6 +1,6 @@
 import { Calculator } from '@Calculator/Calculator';
 import { Signal, signal } from '@preact/signals';
-import type { IMathOperator } from '@lib/math/types';
+import type { IOperation } from '@lib/math/operation/model';
 import { createContext } from 'preact';
 import { Operator } from '../constants';
 
@@ -8,14 +8,14 @@ export interface ICalculatorContextType {
   expression: Signal<string>;
   calculationResult: Signal<string>;
   error: Signal<string>;
-  operators: Signal<IMathOperator[]>;
+  operators: Signal<IOperation[]>;
   calculator: Signal<Calculator<string>>;
   addToExpression: (value: string) => void;
   setExpression: (value: string) => void;
   clearExpression: () => void;
   calculate: () => void;
   backspace: () => void;
-  setOperatorsSet: (operatorSet: IMathOperator[]) => void;
+  setOperatorsSet: (operatorSet: IOperation[]) => void;
 }
 
 export const DEFAULT_OPERATORS = [
@@ -27,7 +27,7 @@ export const DEFAULT_OPERATORS = [
   Operator.Divide,
 ];
 
-export const initCalculator = (operators: IMathOperator[]) => new Calculator({
+export const initCalculator = (operators: IOperation[]) => new Calculator({
   supportedOperators: operators,
 });
 

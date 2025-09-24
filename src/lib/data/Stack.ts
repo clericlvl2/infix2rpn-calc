@@ -20,7 +20,9 @@ export class Stack<Item> {
   }
 
   public readTop(): Item | undefined {
-    return this.stack.at(-1);
+    const length = this.stack.length;
+
+    return length ? this.stack[length - 1] : undefined;
   }
 
   public clear() {

@@ -1,64 +1,61 @@
-import { ErrorMessage, throwError } from '@lib/errors';
-import type { IMathOperator } from '@lib/math/types';
-import { isEmptyString, isString } from '@lib/validation';
-import { Parenthesis } from '@lib/math/parentheses';
-import { regexEscape } from '@lib/utils';
-
-interface ICalculatorOptions {
-  supportedOperators: IMathOperator[],
-}
+import {ErrorMessage} from '@lib/errors';
+import type {IOperation} from '@lib/math/operation/model';
+import {isEmptyString, isString} from '@lib/validation';
+import {isParenthesis, Parenthesis} from '@lib/math/parentheses';
+import {regexEscape} from '@lib/utils';
 
 export class Validator {
-  private supportedOperators: IMathOperator[];
   private allowedSymbolsRegex: RegExp;
 
-  constructor({ supportedOperators }: ICalculatorOptions) {
-    this.supportedOperators = supportedOperators;
-    this.allowedSymbolsRegex = this.createAllowedSymbolsRegex();
+  constructor(private operationsList: IOperation[]) {
+    this.allowedSymbolsRegex = this.createAllowedSymbolsRegex(operationsList);
   }
 
   public checkString(expression: string): void {
     if (!isString(expression)) {
-      throwError(ErrorMessage.Invalid);
+      throw new Error(ErrorMessage.Invalid);
     }
   };
 
   public checkEmptyString(expression: string): void {
     if (isEmptyString(expression)) {
-      throwError(ErrorMessage.EmptyExpression);
+      throw new Error(ErrorMessage.EmptyExpression);
     }
   };
 
   public checkNotAllowedSymbols(expression: string): void {
     if (!this.allowedSymbolsRegex.test(expression)) {
-      throwError(ErrorMessage.NotAllowedSymbols);
+      throw new Error(ErrorMessage.NotAllowedSymbols);
     }
   };
-
-  private getCount(counter: Record<string, number>, chunk: string): number {
-    return counter[chunk] ?? 0;
-  }
 
   public checkParentheses(expression: string): void {
-    const counter: Record<string, number> = {};
+    const counter = {
+      [Parenthesis.Opening]: 0,
+      [Parenthesis.Closing]: 0
+    };
 
     for (const chunk of expression) {
-      if (this.getCount(counter, Parenthesis.Closing) > this.getCount(counter, Parenthesis.Opening)) {
-        throwError(ErrorMessage.UnmatchedParentheses);
+      if (!isParenthesis(chunk)) {
+        continue;
       }
 
-      counter[chunk] = this.getCount(counter, chunk) + 1;
+      if (counter[Parenthesis.Closing] > counter[Parenthesis.Opening]) {
+        throw new Error(ErrorMessage.UnmatchedParentheses);
+      }
+
+      counter[chunk] += 1;
     }
 
-    if (this.getCount(counter, Parenthesis.Closing) !== this.getCount(counter, Parenthesis.Opening)) {
-      throwError(ErrorMessage.UnmatchedParentheses);
+    if (counter[Parenthesis.Closing] != counter[Parenthesis.Opening]) {
+      throw new Error(ErrorMessage.UnmatchedParentheses);
     }
   };
 
-  private createAllowedSymbolsRegex(): RegExp {
+  private createAllowedSymbolsRegex(allowedOperations: IOperation[]): RegExp {
     const allowedNumbers = '0-9\\.';
     const allowedParentheses = `${regexEscape(Parenthesis.Opening)}${regexEscape(Parenthesis.Closing)}`;
-    const allowedSymbols = this.supportedOperators.map((operator) => regexEscape(operator.symbol)).join('');
+    const allowedSymbols = allowedOperations.map((op) => regexEscape(op.symbol)).join('');
     const regexString = `^[${allowedNumbers}${allowedParentheses}${allowedSymbols}]+$`;
 
     return new RegExp(regexString);

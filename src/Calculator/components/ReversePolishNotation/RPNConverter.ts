@@ -1,36 +1,19 @@
-import { Stack } from '@lib/data/Stack';
-import { isOpeningParenthesis, isParenthesis, type TParentheses } from '@lib/math/parentheses';
-import type { IMathOperator } from '@lib/math/types';
-import { isExist } from '@lib/validation';
-import type { TEnrichedExpression, TNumberToken } from '../../types';
-import { ExpressionTokenType } from '../TokenProcessor/enums';
-import { TokenProcessor } from '../TokenProcessor/TokenProcessor';
-import { isOperatorToken } from '../TokenProcessor/utils';
+import {Stack} from '@lib/data/Stack';
+import {isOpeningParenthesis} from '@lib/math/parentheses';
+import {isExist} from '@lib/validation';
+import {Token, TokenType} from "@Calculator/components/Tokenizer/model";
+import {IOperation} from "@lib/math/operation/model";
 
 export class RPNConverter {
-  private operatorsStack: Stack<IMathOperator | TParentheses>;
-  private notation: TEnrichedExpression;
-  private tokenProcessor: TokenProcessor;
+  private operationsStack = new Stack<Token>();
+  private notation: Token[] = [];
+  private tokenProcessor = {
+    [TokenType.Number]: this.processNumberToken,
+    [TokenType.Operation]: this.processOperationToken,
+    [TokenType.Parenthesis]: this.processParenthesisToken,
+  };
 
-  constructor() {
-    this.operatorsStack = new Stack<IMathOperator | TParentheses>();
-    this.notation = [];
-
-    this.tokenProcessor = new TokenProcessor({
-      supportedTokensTypes: [
-        ExpressionTokenType.Number,
-        ExpressionTokenType.Operator,
-        ExpressionTokenType.Parenthesis,
-      ],
-      tokenProcessor: {
-        [ExpressionTokenType.Number]: this.processTokenChunk.bind(this),
-        [ExpressionTokenType.Operator]: this.processOperatorChunk.bind(this),
-        [ExpressionTokenType.Parenthesis]: this.processBracketChunk.bind(this),
-      },
-    });
-  }
-
-  public convert(tokenizedExpression: TEnrichedExpression): (TNumberToken | IMathOperator)[] {
+  public convert(tokenizedExpression: Token[]): Token[] {
     const converted = this.getConvertedExpression(tokenizedExpression);
 
     this.reset();
@@ -40,48 +23,48 @@ export class RPNConverter {
 
   public reset(): void {
     this.notation = [];
-    this.operatorsStack.clear();
+    this.operationsStack.clear();
   }
 
-  private getConvertedExpression(tokenizedExpression: TEnrichedExpression): (TNumberToken | IMathOperator)[] {
-    tokenizedExpression.forEach(this.tokenProcessor.process);
-    this.operatorsStack.popAllTo(this.notation);
+  private getConvertedExpression(tokenizedExpression: Token[]): Token[] {
+    tokenizedExpression.forEach(token => this.tokenProcessor[token.type]?.(token));
+    this.operationsStack.popAllTo(this.notation);
 
     return this.notation;
   }
 
-  private processTokenChunk(chunk: TNumberToken): void {
-    this.notation.push(chunk);
+  private processNumberToken(nToken: Token): void {
+    this.notation.push(nToken);
   }
 
-  private processOperatorChunk(operator: IMathOperator): void {
-    const topStackItem = this.operatorsStack.readTop();
+  private processOperationToken(oToken: Token): void {
+    const topStackItem = this.operationsStack.readTop();
     const topStackItemPrecedence = this.getStackItemPrecedence(topStackItem);
 
-    if (isExist(topStackItem) && operator.precedence <= topStackItemPrecedence) {
-      this.operatorsStack.popTopTo(this.notation);
+    if (isExist(topStackItem) && (oToken.value as IOperation).precedence <= topStackItemPrecedence) {
+      this.operationsStack.popTopTo(this.notation);
     }
 
-    this.operatorsStack.push(operator);
+    this.operationsStack.push(oToken);
   }
 
-  private processBracketChunk(chunk: TParentheses): void {
-    if (isOpeningParenthesis(chunk)) {
-      this.operatorsStack.push(chunk);
+  private processParenthesisToken(pToken: Token): void {
+    if (isOpeningParenthesis(pToken.value)) {
+      this.operationsStack.push(pToken);
       return;
     }
 
-    let token = this.operatorsStack.pop();
+    let token = this.operationsStack.pop();
 
-    while (token && !isParenthesis(token)) {
+    while (token && token.type !== TokenType.Parenthesis) {
       this.notation.push(token);
-      token = this.operatorsStack.pop();
+      token = this.operationsStack.pop();
     }
   }
 
-  private getStackItemPrecedence(item: TParentheses | IMathOperator | undefined): number {
-    return !!item && isOperatorToken(item)
-      ? item.precedence
+  private getStackItemPrecedence(token: Token | undefined): number {
+    return isExist(token) && token.type === TokenType.Operation
+      ? (token.value as IOperation).precedence
       : 0;
   }
 }

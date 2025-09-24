@@ -1,5 +1,5 @@
 import { signal } from '@preact/signals';
-import type { IMathOperator } from '@lib/math/types';
+import type { IOperation } from '@lib/math/operation/model';
 import { ComponentChildren } from 'preact';
 import { CalculatorContext, ICalculatorContextType, DEFAULT_OPERATORS, initCalculator } from './context';
 
@@ -11,7 +11,7 @@ export const CalculatorProvider = ({ children }: ICalculatorProviderProps) => {
   const expression = signal('');
   const result = signal('');
   const error = signal('');
-  const operators = signal<IMathOperator[]>(DEFAULT_OPERATORS);
+  const operators = signal<IOperation[]>(DEFAULT_OPERATORS);
   const calculator = signal(initCalculator(DEFAULT_OPERATORS));
 
   const addToExpression = (value: string) => {
@@ -31,7 +31,7 @@ export const CalculatorProvider = ({ children }: ICalculatorProviderProps) => {
     }
   };
 
-  const setOperatorsSet = (operatorSet: IMathOperator[]) => {
+  const setOperatorsSet = (operatorSet: IOperation[]) => {
     operators.value = operatorSet;
     calculator.value = initCalculator(operatorSet);
   };
