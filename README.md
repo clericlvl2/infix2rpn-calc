@@ -1,6 +1,6 @@
 # Calculator App
 
-A simple, visually appealing calculator built using modern frontend technologies.
+A simple calculator app built using modern frontend technologies and SOLID principles in mind.
 Calculation algorithm is based on [reverse polish notation](https://en.wikipedia.org/wiki/Shunting_yard_algorithm)
 
 https://clericlvl2.github.io/rpn-calculator/
@@ -42,16 +42,25 @@ https://clericlvl2.github.io/rpn-calculator/
 
 ## Plans
 
-- Calculator features:
-  - Add different associativity support (5!, for example)
-  - Add multi-symbols named operators (sqrt, sin, etc.)
-  - Track keyboard input with non-focused calculator input field
-  - Refactor Tokenizator, add different token types
+- Calculator:
+  - Add associativity support
+  - Add suffix support
+  - Add functions support (sqrt, sin, etc.)
+  - Add variables support (pi, e, etc)
+  - Add decimal numbers with comma support
+  - Add scientific numbers support
+  - Add smart errors
+  - Add calculation cache
+  - Add rpn notation hook, show notation on every input
+  - Add key-pressing event listeners
 - UI:
-  - Add visible informer about project, explain why it is cool
-  - Add different operators sets (simple and engeneering)
+  - Add minimalistic and visually appealing look, possibly pixel-art
+  - Add an informer explaining reverse polish notation
+  - Add a visible field for showing current rpn notation
+  - Add small 'about me' section
   - Add theme picker
 - Fix
-  - Adjust input scroll behaviour on backspace
-  - Restrict validation policy (1--1)
-  - Fix parenthesys problem "()"
+  - Fix input scroll behaviour on backspace, not intuitive
+  - Fix parentheses problem "()", sensible input?
+  - Fix max input length
+  - Fix safe calculation threshold (isSafeNumber)
