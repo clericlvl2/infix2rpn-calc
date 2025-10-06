@@ -1,4 +1,4 @@
-const DECIMAL_NUMBER_REGEX = /^-?\d+(?:\.\d+)?$/;
+const DECIMAL_NUMBER_REGEX = /^\d+(?:\.\d+)?$/;
 
 export const isExist = <T>(value: T | null | undefined): value is T => {
   return value !== undefined && value !== null;

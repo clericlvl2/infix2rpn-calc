@@ -23,7 +23,7 @@ export interface IExpressionToken {
 
 export interface IRawOperationToken {
   value: string;
-  type: TokenType.Operation;
+  type: TokenType.RawOperation;
 }
 
 export interface IOperationToken {
