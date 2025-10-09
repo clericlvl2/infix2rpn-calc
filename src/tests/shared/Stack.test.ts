@@ -2,28 +2,26 @@ import { Stack } from '@shared/lib/Stack';
 import { describe, expect, it } from 'vitest';
 
 describe('Stack', () => {
-    describe('Initialization', () => {
-        it('should create an empty stack when no initial array is provided', () => {
-            const stack = new Stack();
-            expect(stack.size()).toBe(0);
-        });
-
-        it('should create a stack with initial items', () => {
-            const initialItems = [1, 2, 3];
-            const stack = new Stack(initialItems);
-            expect(stack.size()).toBe(3);
-        });
+    it('creates an empty stack when no initial array is provided', () => {
+        const stack = new Stack();
+        expect(stack.size()).toBe(0);
     });
 
-    describe('Size Method', () => {
-        it('should return correct size after operations', () => {
+    it('creates a stack with initial items', () => {
+        const initialItems = [1, 2, 3];
+        const stack = new Stack(initialItems);
+        expect(stack.size()).toBe(3);
+    });
+
+    describe('size method', () => {
+        it('returns correct size after operations', () => {
             const stack = new Stack<number>();
             expect(stack.size()).toBe(0);
 
-            stack.push(1);
+            stack.add(1);
             expect(stack.size()).toBe(1);
 
-            stack.push(2);
+            stack.add(2);
             expect(stack.size()).toBe(2);
 
             stack.pop();
@@ -31,75 +29,75 @@ describe('Stack', () => {
         });
     });
 
-    describe('Push Method', () => {
-        it('should add items to the stack', () => {
+    describe('add method', () => {
+        it('adds items to the stack', () => {
             const stack = new Stack<string>();
-            stack.push('first');
-            stack.push('second');
+            stack.add('first');
+            stack.add('second');
 
             expect(stack.size()).toBe(2);
         });
 
-        it('should work with different types', () => {
+        it('works with different types', () => {
             const stack = new Stack<number | string | boolean>();
-            stack.push(1);
-            stack.push('two');
-            stack.push(true);
+            stack.add(1);
+            stack.add('two');
+            stack.add(true);
 
             expect(stack.size()).toBe(3);
         });
     });
 
-    describe('Pop Method', () => {
-        it('should remove and return the last item', () => {
+    describe('pop method', () => {
+        it('removes and returns the last item', () => {
             const stack = new Stack<number>();
-            stack.push(1);
-            stack.push(2);
+            stack.add(1);
+            stack.add(2);
 
             const popped = stack.pop();
             expect(popped).toBe(2);
             expect(stack.size()).toBe(1);
         });
 
-        it('should return undefined for an empty stack', () => {
+        it('returns null for an empty stack', () => {
             const stack = new Stack<number>();
             const popped = stack.pop();
-            expect(popped).toBeUndefined();
+            expect(popped).toBeNull();
         });
     });
 
-    describe('ReadTop Method', () => {
-        it('should return the top item without removing it', () => {
+    describe('readTop method', () => {
+        it('returns the top item without removing it', () => {
             const stack = new Stack<number>();
-            stack.push(1);
-            stack.push(2);
+            stack.add(1);
+            stack.add(2);
 
             const top = stack.readTop();
             expect(top).toBe(2);
             expect(stack.size()).toBe(2);
         });
 
-        it('should return undefined for an empty stack', () => {
+        it('returns null for an empty stack', () => {
             const stack = new Stack<number>();
             const top = stack.readTop();
-            expect(top).toBeUndefined();
+            expect(top).toBeNull();
         });
     });
 
-    describe('Clear Method', () => {
-        it('should remove all items from the stack', () => {
+    describe('clear method', () => {
+        it('removes all items from the stack', () => {
             const stack = new Stack<number>();
-            stack.push(1);
-            stack.push(2);
+            stack.add(1);
+            stack.add(2);
 
             stack.clear();
             expect(stack.size()).toBe(0);
-            expect(stack.readTop()).toBeUndefined();
+            expect(stack.readTop()).toBeNull();
         });
     });
 
-    describe('PopTo Method', () => {
-        it('should pop specified number of items to target array', () => {
+    describe('popTo method', () => {
+        it('pops specified number of items to target array', () => {
             const stack = new Stack<number>([1, 2, 3, 4, 5]);
             const target: number[] = [];
 
@@ -109,7 +107,7 @@ describe('Stack', () => {
             expect(stack.size()).toBe(2);
         });
 
-        it('should handle popping more items than stack size', () => {
+        it('handles popping more items than stack size', () => {
             const stack = new Stack<number>([1, 2]);
             const target: number[] = [];
 
@@ -119,7 +117,7 @@ describe('Stack', () => {
             expect(stack.size()).toBe(0);
         });
 
-        it('should work with mixed type arrays', () => {
+        it('works with mixed type arrays', () => {
             const stack = new Stack<number | string>([1, 'two', 3]);
             const target: (number | string)[] = [];
 
@@ -130,8 +128,8 @@ describe('Stack', () => {
         });
     });
 
-    describe('PopTopTo Method', () => {
-        it('should pop the top item to target array', () => {
+    describe('popTopTo method', () => {
+        it('pops the top item to target array', () => {
             const stack = new Stack<number>([1, 2, 3]);
             const target: number[] = [];
 
@@ -141,7 +139,7 @@ describe('Stack', () => {
             expect(stack.size()).toBe(2);
         });
 
-        it('should handle empty stack', () => {
+        it('handles empty stack', () => {
             const stack = new Stack<number>();
             const target: number[] = [];
 
@@ -152,8 +150,8 @@ describe('Stack', () => {
         });
     });
 
-    describe('PopAllTo Method', () => {
-        it('should pop all items to target array', () => {
+    describe('popAllTo method', () => {
+        it('pops all items to target array', () => {
             const stack = new Stack<number>([1, 2, 3]);
             const target: number[] = [];
 
@@ -163,7 +161,7 @@ describe('Stack', () => {
             expect(stack.size()).toBe(0);
         });
 
-        it('should handle empty stack', () => {
+        it('handles empty stack', () => {
             const stack = new Stack<number>();
             const target: number[] = [];
 
@@ -174,51 +172,30 @@ describe('Stack', () => {
         });
     });
 
-    describe('Edge Cases and Type Flexibility', () => {
-        it('should support multiple push and pop operations', () => {
-            const stack = new Stack<number>();
+    it('supports multiple push and pop operations', () => {
+        const stack = new Stack<number>();
 
-            stack.push(1);
-            stack.push(2);
-            expect(stack.pop()).toBe(2);
-            stack.push(3);
-            expect(stack.size()).toBe(2);
-        });
-
-        it('should work with complex objects', () => {
-            interface TestObject {
-                id: number;
-                name: string;
-            }
-
-            const stack = new Stack<TestObject>();
-            const obj1 = { id: 1, name: 'first' };
-            const obj2 = { id: 2, name: 'second' };
-
-            stack.push(obj1);
-            stack.push(obj2);
-
-            expect(stack.readTop()).toEqual(obj2);
-            expect(stack.size()).toBe(2);
-        });
+        stack.add(1);
+        stack.add(2);
+        expect(stack.pop()).toBe(2);
+        stack.add(3);
+        expect(stack.size()).toBe(2);
     });
 
-    describe('Interaction with isExist Validation', () => {
-        it.skip('should only push non-null/undefined items when using popTo', () => {
-            // const stack = new Stack<number | null | undefined>([1, null, 2, undefined, 3]);
-            // const target: number[] = [];
-            //
-            // const originalIsExist = isExist;
-            // (global as any).isExist = (item: any) => item !== null && item !== undefined;
-            //
-            // try {
-            //   stack.popAllTo(target);
-            //
-            //   expect(target).toEqual([3, 2, 1]);
-            //   expect(stack.size()).toBe(0);
-            // } finally {
-            //   (global as any).isExist = originalIsExist;
-            // }
-        });
+    it('works with complex objects', () => {
+        interface TestObject {
+            id: number;
+            name: string;
+        }
+
+        const stack = new Stack<TestObject>();
+        const obj1 = { id: 1, name: 'first' };
+        const obj2 = { id: 2, name: 'second' };
+
+        stack.add(obj1);
+        stack.add(obj2);
+
+        expect(stack.readTop()).toEqual(obj2);
+        expect(stack.size()).toBe(2);
     });
 });

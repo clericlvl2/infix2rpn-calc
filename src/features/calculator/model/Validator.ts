@@ -1,6 +1,6 @@
-import { ErrorMessage } from '../config/errors';
-import { isParen, Paren } from '@shared/lib/math';
+import { isLeftParen, isRightParen, Paren } from '@shared/lib/math';
 import { isEmptyString, isString, regexEscape } from '@shared/model/validation';
+import { ErrorMessage } from '../config/errors';
 
 export class Validator {
     private allowedSymbolsRegex: RegExp;
@@ -11,13 +11,13 @@ export class Validator {
 
     checkString(expression: string): void {
         if (!isString(expression)) {
-            throw new Error(ErrorMessage.Invalid);
+            throw new Error(ErrorMessage.InvalidExpressionPassed);
         }
     };
 
     checkEmptyString(expression: string): void {
         if (isEmptyString(expression)) {
-            throw new Error(ErrorMessage.EmptyExpression);
+            throw new Error(ErrorMessage.EmptyExpressionPassed);
         }
     };
 
@@ -28,24 +28,23 @@ export class Validator {
     };
 
     checkParentheses(expression: string): void {
-        const counter = {
-            [Paren.Left]: 0,
-            [Paren.Right]: 0,
-        };
+        let counter = 0;
 
         for (const chunk of expression) {
-            if (!isParen(chunk)) {
-                continue;
-            }
-
-            if (counter[Paren.Right] > counter[Paren.Left]) {
+            if (counter < 0) {
                 throw new Error(ErrorMessage.UnmatchedParenthesesFound);
             }
 
-            counter[chunk] += 1;
+            if (isLeftParen(chunk)) {
+                ++counter;
+            }
+
+            if (isRightParen(chunk)) {
+                --counter;
+            }
         }
 
-        if (counter[Paren.Right] != counter[Paren.Left]) {
+        if (counter) {
             throw new Error(ErrorMessage.UnmatchedParenthesesFound);
         }
     };

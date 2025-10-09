@@ -14,8 +14,8 @@ import { IParserStrategy } from './model/Parser/model';
 import { Parser } from './model/Parser/Parser';
 import { RawOperationParserStrategy } from './model/Parser/strategies';
 import { RPNCalculator } from './model/RPNCalculator';
-import { RPNConverter } from './model/RPNConverter';
-import { TLexerToken, TokenType, TRawToken } from './model/token';
+import { InfixRPNConverter } from './model/InfixRPNConverter';
+import { TLexerToken, TokenType, TParsedToken, TRawToken, TRPNToken } from './model/token';
 import { Validator } from './model/Validator';
 
 const OPERATIONS = [
@@ -43,8 +43,6 @@ const PARSER_STRATEGIES = [
 export class Calculator {
     private validator: Validator;
     private parser: Parser;
-    private rpnConverter: RPNConverter;
-    private rpnCalculator: RPNCalculator;
 
     constructor(
         private operations: IOperation[] = OPERATIONS,
@@ -53,29 +51,20 @@ export class Calculator {
     ) {
         this.parser = new Parser(this.parserStrategies);
         this.validator = new Validator(this.operations.map(op => op.symbol));
-        this.rpnConverter = new RPNConverter();
-        this.rpnCalculator = new RPNCalculator();
     }
 
     calculate(expression: string): number {
-        this.resetRPN();
-
         this.validator.checkString(expression);
         const filtered = filterWhitespaces(expression);
-        const validated = this.validateExpression(filtered);
-        const tokenized = this.tokenizer(validated);
-        const recognized = this.parser.parse(tokenized);
-        const converted = this.rpnConverter.convert(recognized);
+        const validated = this.validate(filtered);
+        const tokenized = this.tokenize(validated);
+        const parsed = this.parser.parse(tokenized);
+        const converted = this.convertInfixToRPN(parsed);
 
-        return this.rpnCalculator.calculate(converted);
+        return this.calculateRPN(converted);
     }
 
-    private resetRPN() {
-        this.rpnConverter.reset();
-        this.rpnCalculator.reset();
-    }
-
-    private validateExpression(expression: string) {
+    private validate(expression: string) {
         this.validator.checkEmptyString(expression);
         this.validator.checkNotAllowedSymbols(expression);
         this.validator.checkParentheses(expression);
@@ -83,7 +72,7 @@ export class Calculator {
         return expression;
     }
 
-    private tokenizer(expression: string): TRawToken[] {
+    private tokenize(expression: string): TRawToken[] {
         const tokenized: TRawToken[] = [];
         const lexer = new Lexer<TLexerToken>(expression, this.lexerStrategies);
 
@@ -104,5 +93,17 @@ export class Calculator {
         }
 
         return tokenized;
+    }
+
+    private convertInfixToRPN(expression: TParsedToken[]) {
+        const converter = new InfixRPNConverter(expression);
+
+        return converter.convert();
+    }
+
+    private calculateRPN(expression: TRPNToken[]) {
+        const calculator = new RPNCalculator(expression);
+
+        return calculator.calculate();
     }
 }

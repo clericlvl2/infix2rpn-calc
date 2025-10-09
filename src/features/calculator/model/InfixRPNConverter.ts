@@ -3,7 +3,7 @@ import { Stack } from '@shared/lib/Stack';
 import { isExist } from '@shared/model/validation';
 import { ILParenToken, INumberToken, IOperationToken, TokenType, TParsedToken, TRPNToken } from './token';
 
-export class RPNConverter {
+export class InfixRPNConverter {
     private operationsStack = new Stack<IOperationToken | ILParenToken>();
     private notation: TRPNToken[] = [];
     private tokenProcessor = {
@@ -13,22 +13,11 @@ export class RPNConverter {
         [TokenType.RParen]: this.processRParenToken.bind(this),
     };
 
-    convert(tokenizedExpression: TParsedToken[]): TRPNToken[] {
-        const converted = this.getConvertedExpression(tokenizedExpression);
+    constructor(private readonly input: TParsedToken[]) {}
 
-        this.reset();
-
-        return converted;
-    }
-
-    reset(): void {
-        this.notation = [];
-        this.operationsStack.clear();
-    }
-
-    private getConvertedExpression(tokenizedExpression: TParsedToken[]): TRPNToken[] {
+    convert(): TRPNToken[] {
         // @ts-expect-error todo i dont know how to deal with maps and corresponding loops...
-        tokenizedExpression.forEach(token => this.tokenProcessor[token.type]?.(token));
+        this.input.forEach(token => this.tokenProcessor[token.type]?.(token));
         this.operationsStack.popAllTo(this.notation);
 
         return this.notation;
@@ -40,17 +29,16 @@ export class RPNConverter {
 
     private processOperationToken(oToken: IOperationToken): void {
         const topStackItem = this.operationsStack.readTop();
-        const topStackItemPrecedence = this.getStackItemPrecedence(topStackItem);
 
-        if (isExist(topStackItem) && (oToken.value as IOperation).precedence <= topStackItemPrecedence) {
+        if (isExist(topStackItem) && oToken.value.precedence <= this.getTokenPrecedence(topStackItem)) {
             this.operationsStack.popTopTo(this.notation);
         }
 
-        this.operationsStack.push(oToken);
+        this.operationsStack.add(oToken);
     }
 
     private processLParenToken(pToken: ILParenToken): void {
-        this.operationsStack.push(pToken);
+        this.operationsStack.add(pToken);
     }
 
     private processRParenToken(): void {
@@ -62,7 +50,7 @@ export class RPNConverter {
         }
     }
 
-    private getStackItemPrecedence(token: TParsedToken | undefined): number {
+    private getTokenPrecedence(token: TParsedToken): number {
         return isExist(token) && token.type === TokenType.Operation
             ? (token.value as IOperation).precedence
             : 0;

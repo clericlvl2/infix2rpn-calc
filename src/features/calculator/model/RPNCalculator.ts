@@ -10,8 +10,11 @@ export class RPNCalculator {
         [TokenType.Operation]: this.processOperationToken.bind(this),
     };
 
-    calculate(expression: TRPNToken[]): number {
-        this.initExpressionCalc(expression);
+    constructor(private input: TRPNToken[]) {}
+
+    calculate(): number {
+        // @ts-expect-error todo I don't know how to deal with maps and corresponding loops...
+        this.input.forEach(token => this.tokenProcessor[token.type]?.(token));
         const result = this.stack.pop() as number;
 
         this.checkEmptyCalculationStack();
@@ -19,25 +22,16 @@ export class RPNCalculator {
         return result;
     }
 
-    reset() {
-        this.stack.clear();
-    }
-
-    private initExpressionCalc(expression: TRPNToken[]): void {
-        // @ts-expect-error todo I don't know how to deal with maps and corresponding loops...
-        expression.forEach(token => this.tokenProcessor[token.type]?.(token));
-    }
-
     private checkEmptyCalculationStack(): void {
         if (this.stack.size()) {
-            throw new Error(ErrorMessage.CalculationError);
+            throw new Error(ErrorMessage.CalculationErrorFound);
         }
     }
 
     private processNumberToken(nToken: INumberToken) {
         const nValue = parseFloat(nToken.value);
 
-        this.stack.push(nValue);
+        this.stack.add(nValue);
     }
 
     private processOperationToken(oToken: IOperationToken) {
@@ -48,6 +42,6 @@ export class RPNCalculator {
 
         const actionResult = operation.action(...actionParameters.reverse());
 
-        this.stack.push(actionResult);
+        this.stack.add(actionResult);
     }
 }

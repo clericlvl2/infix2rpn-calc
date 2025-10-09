@@ -11,22 +11,20 @@ export class Stack<Item> {
         return this.stack.length;
     }
 
-    push(item: Item): void {
+    add(item: Item): void {
         this.stack.push(item);
     }
 
-    pop(): Item | undefined {
-        return this.stack.pop();
-    }
-
-    readTop(): Item | undefined {
-        const length = this.stack.length;
-
-        return length ? this.stack[length - 1] : undefined;
+    pop(): Item | null {
+        return this.stack.pop() ?? null;
     }
 
     clear() {
         this.stack = [];
+    }
+
+    readTop(): Item | null {
+        return this.stack[this.size() - 1] ?? null;
     }
 
     popTo(target: unknown[], count: number): void {

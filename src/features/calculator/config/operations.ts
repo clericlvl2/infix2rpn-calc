@@ -51,7 +51,7 @@ export const Operation = {
         arity: 2,
         action: (dividend: number, divisor: number): number => {
             if (isZero(divisor)) {
-                throw new Error(ErrorMessage.DivisionByZero);
+                throw new Error(ErrorMessage.DivisionByZeroFound);
             }
 
             return dividend / divisor;

@@ -55,6 +55,14 @@ describe('Validator', () => {
     });
 
     describe('checkNotAllowedSymbols', () => {
+        it('handles expression with only numbers', () => {
+            expect(() => validator.checkNotAllowedSymbols('123')).not.toThrow();
+        });
+
+        it('handles expression with only operators', () => {
+            expect(() => validator.checkNotAllowedSymbols('+')).not.toThrow();
+        });
+
         it('does not throw for expression with only allowed symbols', () => {
             expect(() => validator.checkNotAllowedSymbols('2+2')).not.toThrow();
         });
@@ -62,9 +70,24 @@ describe('Validator', () => {
         it('throws for expression with disallowed symbols', () => {
             expect(() => validator.checkNotAllowedSymbols('2+2$')).toThrow();
         });
+
+        it('handles expression with decimal numbers', () => {
+            expect(() => validator.checkNotAllowedSymbols('3.14')).not.toThrow();
+        });
+
+        it('handles expressions with special characters in operators', () => {
+            const specialOperators = ['√'];
+            const specialValidator = new Validator(specialOperators);
+
+            expect(() => specialValidator.checkNotAllowedSymbols('√4')).not.toThrow();
+        });
     });
 
     describe('checkParentheses', () => {
+        it('handles expression with only parentheses', () => {
+            expect(() => validator.checkParentheses('()')).not.toThrow();
+        });
+
         it('does not throw for expression with matched parentheses', () => {
             expect(() => validator.checkParentheses('(2+2)')).not.toThrow();
         });
@@ -84,6 +107,16 @@ describe('Validator', () => {
         it('throws for expression with mismatched number of parentheses', () => {
             expect(() => validator.checkParentheses('((2+2)')).toThrow();
         });
+
+        it('throws for parentheses with wrong order', () => {
+            expect(() => validator.checkParentheses(')(')).toThrow();
+        });
+
+        it('handles deeply nested parentheses', () => {
+            const deeplyNested = '('.repeat(100) + '0' + ')'.repeat(100);
+
+            expect(() => validator.checkParentheses(deeplyNested)).not.toThrow();
+        });
     });
 
     describe('createAllowedSymbolsRegex (private method)', () => {
@@ -100,57 +133,24 @@ describe('Validator', () => {
         });
     });
 
-    describe('Integration Tests', () => {
-        it('validates a complete valid expression', () => {
-            const expression = '(2+3)*(4/2)';
+    it('validates a complete valid expression', () => {
+        const expression = '(2+3)*(4/2)';
 
-            expect(() => {
-                validator.checkString(expression);
-                validator.checkEmptyString(expression);
-                validator.checkNotAllowedSymbols(expression);
-                validator.checkParentheses(expression);
-            }).not.toThrow();
-        });
-
-        it('fails validation for an invalid expression with multiple issues', () => {
-            const expression = '(2+$)';
-
-            expect(() => {
-                validator.checkString(expression);
-                validator.checkEmptyString(expression);
-                validator.checkNotAllowedSymbols(expression);
-            }).toThrow();
-        });
+        expect(() => {
+            validator.checkString(expression);
+            validator.checkEmptyString(expression);
+            validator.checkNotAllowedSymbols(expression);
+            validator.checkParentheses(expression);
+        }).not.toThrow();
     });
 
-    describe('Edge Cases', () => {
-        it('handles expression with only numbers', () => {
-            expect(() => validator.checkNotAllowedSymbols('123')).not.toThrow();
-        });
+    it('fails validation for an invalid expression with multiple issues', () => {
+        const expression = '(2+$)';
 
-        it('handles expression with only operators', () => {
-            expect(() => validator.checkNotAllowedSymbols('+')).not.toThrow();
-        });
-
-        it('handles expression with only parentheses', () => {
-            expect(() => validator.checkParentheses('()')).not.toThrow();
-        });
-
-        it('handles expression with decimal numbers', () => {
-            expect(() => validator.checkNotAllowedSymbols('3.14')).not.toThrow();
-        });
-
-        it('handles deeply nested parentheses', () => {
-            const deeplyNested = '('.repeat(100) + '0' + ')'.repeat(100);
-
-            expect(() => validator.checkParentheses(deeplyNested)).not.toThrow();
-        });
-
-        it('handles expressions with special characters in operators', () => {
-            const specialOperators = ['√'];
-            const specialValidator = new Validator(specialOperators);
-
-            expect(() => specialValidator.checkNotAllowedSymbols('√4')).not.toThrow();
-        });
+        expect(() => {
+            validator.checkString(expression);
+            validator.checkEmptyString(expression);
+            validator.checkNotAllowedSymbols(expression);
+        }).toThrow();
     });
 });
