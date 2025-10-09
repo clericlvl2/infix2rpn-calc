@@ -1,33 +1,46 @@
 # Calculator App
 
-A simple calculator app built using modern frontend technologies and SOLID principles in mind.
-Calculation algorithm is based on [reverse polish notation](https://en.wikipedia.org/wiki/Shunting_yard_algorithm)
+A small calculator app built using modern frontend technologies and following SOLID principles.
 
 https://clericlvl2.github.io/rpn-calculator/
 
+## Algorithm
+
+The calculation algorithm works in two steps:
+1. Converting infix notation to reverse polish notation (RPN) using the [shunting yard algorithm](https://en.wikipedia.org/wiki/Shunting_yard_algorithm)
+2. Calculating the RPN expression using a stack-based approach
+
+For example, the infix expression `3 + 4 × 2`:
+- Is converted to RPN: `3 4 2 * +`
+- Is calculated by processing each token:
+  - Push *3* → stack: *[3]*
+  - Push *4* → stack: *[3, 4]*
+  - Push *2* → stack: *[3, 4, 2]*
+  - Apply **×** to *4* and *2* → stack: *[3, 8]*
+  - Apply **+** to *3* and *8* → stack: *[11]*
+- Result: *11*
+
 ## Features
-- Basic arithmetic operations: Addition, Subtraction, Multiplication, Division
-- Clear button to reset calculations
-- User-friendly interface with distinct color-coded buttons
+- Basic arithmetic operations on decimal numbers
 - Responsive design for various screen sizes
 
 ## Technologies
+- Typescript
 - Preact
 - Vite
-- Typescript
-- Jest
+- Vitest
 - Tailwind
 
 ## Installation
 1. Clone the repository:
    ```sh
-   git clone git@github.com:clericlvl2/rpn-calculator.git
+   git clone git@github.com:clericlvl2/infix2rpn-calc.git
    ```
 2. Navigate to the project folder:
    ```sh
-   cd calculator-app
+   cd infix2rpn-calc
    ```
-3. Open `index.html` in a browser, or if using a framework, install dependencies:
+3. Install dependencies and start the development server:
    ```sh
    npm install
    npm run dev
@@ -40,8 +53,13 @@ https://clericlvl2.github.io/rpn-calculator/
 - Click `<` to remove last symbol
 - Click `C` to clear the input and start fresh.
 
-## Plans
+## Testing
+Run the test suite with:
+   ```sh
+   npm run test
+   ```
 
+## Roadmap
 - Calculator:
   - Add associativity support
   - Add suffix support
@@ -59,8 +77,8 @@ https://clericlvl2.github.io/rpn-calculator/
   - Add a visible field for showing current rpn notation
   - Add small 'about me' section
   - Add theme picker
-- Fix
+- Fix:
   - Fix input scroll behaviour on backspace, not intuitive
-  - Fix parentheses problem "()", sensible input?
+  - Fix parentheses problem "()"
   - Fix max input length
-  - Fix safe calculation threshold (isSafeNumber)
+  - Fix big numbers calculation threshold
