@@ -59,7 +59,7 @@ describe('Validator', () => {
 
     describe('checkParentheses', () => {
         it('handles expression with only parentheses', () => {
-            expect(() => validator.checkParentheses('()')).not.toThrow();
+            expect(() => validator.checkParentheses('()')).toThrow();
         });
 
         it('does not throw for expression with matched parentheses', () => {

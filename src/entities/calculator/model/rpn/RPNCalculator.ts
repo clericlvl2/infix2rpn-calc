@@ -2,6 +2,7 @@ import { Stack } from '@shared/lib/Stack';
 import { CalculationError } from '../errors';
 import { IOperation } from '../operations/model';
 import { INumberToken, IOperationToken, TokenType, TRPNToken } from '../token';
+import { validateNumber } from '../validation/number';
 
 export class RPNCalculator {
     private stack = new Stack<number>();
@@ -31,6 +32,8 @@ export class RPNCalculator {
     private processNumberToken(nToken: INumberToken) {
         const nValue = parseFloat(nToken.value);
 
+        validateNumber(nValue);
+
         this.stack.add(nValue);
     }
 
@@ -41,6 +44,8 @@ export class RPNCalculator {
         this.stack.popTo(actionParameters, operation.arity);
 
         const actionResult = operation.action(...actionParameters.reverse());
+
+        validateNumber(actionResult);
 
         this.stack.add(actionResult);
     }

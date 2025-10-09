@@ -1,5 +1,11 @@
 import { isEmptyString, isString } from '@shared/model/validation';
-import { EmptyExpressionError, InvalidDataTypeError, InvalidSymbolError, UnmatchedParenthesesError } from '../errors';
+import {
+    EmptyExpressionError,
+    EmptyParenthesesError,
+    InvalidDataTypeError,
+    InvalidSymbolError,
+    UnmatchedParenthesesError,
+} from '../errors';
 import { isLeftParen, isRightParen, Paren } from '../parentheses';
 
 export class Validator {
@@ -45,16 +51,22 @@ export class Validator {
     checkParentheses(expression: string): void {
         let counter = 0;
 
-        for (const chunk of expression) {
+        for (let i = 0; i < expression.length; i++) {
+            const char = expression[i];
+
             if (counter < 0) {
                 throw new UnmatchedParenthesesError();
             }
 
-            if (isLeftParen(chunk)) {
+            if (isLeftParen(char)) {
                 ++counter;
+
+                if (isRightParen(expression[i + 1])) {
+                    throw new EmptyParenthesesError();
+                }
             }
 
-            if (isRightParen(chunk)) {
+            if (isRightParen(char)) {
                 --counter;
             }
         }

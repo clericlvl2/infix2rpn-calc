@@ -30,6 +30,7 @@ For example, the infix expression `3 + 4 × 2`:
 - Vite
 - Vitest
 - Tailwind
+- FSD
 
 ## Installation
 1. Clone the repository:
@@ -67,7 +68,6 @@ Run the test suite with:
   - Add variables support (pi, e, etc)
   - Add decimal numbers with comma support
   - Add scientific numbers support
-  - Add smart errors
   - Add calculation cache
   - Add rpn notation hook, show notation on every input
   - Add key-pressing event listeners
@@ -79,6 +79,4 @@ Run the test suite with:
   - Add theme picker
 - Fix:
   - Fix input scroll behaviour on backspace, not intuitive
-  - Fix parentheses problem "()"
   - Fix max input length
-  - Fix big numbers calculation threshold

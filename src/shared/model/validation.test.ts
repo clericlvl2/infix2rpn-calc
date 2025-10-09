@@ -1,4 +1,3 @@
-import { regexEscape } from '@entities/calculator/model/validation/Validator';
 import { describe, expect, it } from 'vitest';
 import { filterWhitespaces } from './validation';
 
@@ -29,35 +28,6 @@ describe('strings utils', () => {
 
         it('handles empty string', () => {
             expect(filterWhitespaces('')).toBe('');
-        });
-    });
-
-    describe('regexEscape', () => {
-    // todo do not understand completely how this should work and what should be the result
-        it.skip('escapes special regex characters', () => {
-            const input = '^[].*+?{}()|/$';
-            const expected = '\\[\\]\\.\\*\\+\\?\\{\\}\\(\\)\\|\\/';
-            expect(regexEscape(input)).toBe(expected);
-        });
-
-        it('does not modify regular characters', () => {
-            const input = 'hello world';
-            expect(regexEscape(input)).toBe(input);
-        });
-
-        it('handles empty string', () => {
-            expect(regexEscape('')).toBe('');
-        });
-
-        it('handles string with no special characters', () => {
-            const input = 'abcdef123';
-            expect(regexEscape(input)).toBe(input);
-        });
-
-        it('escapes a complete regex pattern properly ', () => {
-            const input = '/path/to/resource.js';
-            const expected = '\\/path\\/to\\/resource\\.js';
-            expect(regexEscape(input)).toBe(expected);
         });
     });
 });

@@ -73,6 +73,22 @@ describe('Calculator', () => {
         expect(() => calculator.calculate('3 * / 4')).toThrow();
     });
 
+    it('throws on large numbers exceeding limits', () => {
+        expect(() => calculator.calculate('1234567890123456')).toThrow();
+        expect(() => calculator.calculate('1234567890123.45')).toThrow();
+        expect(() => calculator.calculate('123.123456789')).toThrow();
+        expect(() => calculator.calculate('1000000000000000')).toThrow();
+        expect(() => calculator.calculate('-1000000000000000')).toThrow();
+    });
+
+    it('handles edge case numbers at limits without throwing', () => {
+        expect(calculator.calculate('123456789012.45')).toBe(123456789012.45);
+        expect(calculator.calculate('123.12345678')).toBe(123.12345678);
+        expect(calculator.calculate('999999999999')).toBe(999999999999);
+        expect(calculator.calculate('-999999999999')).toBe(-999999999999);
+        expect(calculator.calculate('123456789012.345')).toBe(123456789012.345);
+    });
+
     it('throws on division by zero', () => {
         expect(() => calculator.calculate('4 / 0')).toThrow();
     });
