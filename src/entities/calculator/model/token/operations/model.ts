@@ -1,7 +1,6 @@
 export enum ArityType {
     Unary = 1,
     Binary = 2,
-    Ternary = 3,
 }
 
 export enum SuffixType {
@@ -14,20 +13,28 @@ export enum AssociativityType {
     Right = 'right',
 }
 
-export interface IBaseOperation {
+export interface IAction {
+    action: (...args: number[]) => number;
+}
+
+export interface IArity {
+    arity: number;
+    suffix?: SuffixType;
+}
+
+export interface IBaseOperation extends IAction {
     symbol: string;
     precedence: number;
-    action: (...args: number[]) => number;
     associativity: AssociativityType;
 }
 
-export type IBinaryOperationArity = {
+export interface IBinaryOperationArity extends IArity {
     arity: 2;
-};
+}
 
-export type IUnaryOperationArity = {
+export interface IUnaryOperationArity extends IArity {
     arity: 1;
     suffix: SuffixType.Pre | SuffixType.Post;
-};
+}
 
 export type IOperation = IBaseOperation & (IBinaryOperationArity | IUnaryOperationArity);

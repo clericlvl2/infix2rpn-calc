@@ -1,31 +1,51 @@
-import { filterWhitespaces } from '@shared/model/validation';
 import { Lexer } from './lexer/Lexer';
-import { ILexerStrategy } from './lexer/model';
 import {
+    CommandLexerStrategy,
     EOFLexerStrategy,
     NumberLexerStrategy,
     OperatorLexerStrategy,
     ParensLexerStrategy,
     WhitespaceLexerStrategy,
-} from './lexer/strategies';
-import { Operation, OPERATIONS_REGEX } from './operations/constants';
-import type { IOperation } from './operations/model';
+} from './lexer/LexerStrategies';
+import { ILexerStrategy } from './lexer/model';
+import { Command, COMMANDS_REGEX } from './token/commands';
+import { Operation, OPERATIONS_REGEX } from './token/operations/operations';
 import { IParserStrategy } from './parser/model';
 import { Parser } from './parser/Parser';
-import { RawOperationParserStrategy } from './parser/strategies';
-import { InfixRPNConverter } from './rpn/InfixRPNConverter';
-import { RPNCalculator } from './rpn/RPNCalculator';
-import { TLexerToken, TokenType, TParsedToken, TRawToken, TRPNToken } from './token';
+import { RawCommandParserStrategy, RawOperationParserStrategy } from './parser/ParserStrategies';
+import { InfixRPNConverter } from './rpn/converter/InfixRPNConverter';
+import {
+    CommandConverterStrategy,
+    LParenConverterStrategy,
+    NumberConverterStrategy,
+    OperationConverterStrategy,
+    RParenConverterStrategy,
+} from './rpn/converter/InfixRPNConverterStrategies';
+import { IInfixRPNConverterStrategy } from './rpn/converter/model';
+import { RPNCalculator } from './rpn/calculator/RPNCalculator';
+import { TokenType, TParsedToken, TRawToken, TRPNToken } from './token/token';
 import { Validator } from './validation/Validator';
 
+// todo parse commands and operation regex from constants themselves
 const OPERATIONS = [
-    Operation.Plus,
-    Operation.Minus,
+    Operation.Add,
+    Operation.Subtract,
     Operation.Multiply,
     Operation.Divide,
     Operation.Power,
-    Operation.UnaryMinus,
-    Operation.UnaryPlus,
+    Operation.UnarySubtract,
+    Operation.UnaryAdd,
+];
+
+const COMMANDS = [
+    Command.Sin,
+    Command.Cos,
+    Command.Tan,
+    Command.Log,
+    Command.Ln,
+    Command.Sqrt,
+    Command.Exp,
+    Command.Fact,
 ];
 
 const LEXER_STRATEGIES = [
@@ -33,11 +53,21 @@ const LEXER_STRATEGIES = [
     new NumberLexerStrategy(),
     new ParensLexerStrategy(),
     new OperatorLexerStrategy(OPERATIONS_REGEX),
+    new CommandLexerStrategy(COMMANDS_REGEX),
     new EOFLexerStrategy(),
 ];
 
 const PARSER_STRATEGIES = [
     new RawOperationParserStrategy(OPERATIONS),
+    new RawCommandParserStrategy(COMMANDS),
+];
+
+const INFIX_RPN_CONVERTER_STRATEGIES = [
+    new NumberConverterStrategy(),
+    new LParenConverterStrategy(),
+    new RParenConverterStrategy(),
+    new OperationConverterStrategy(),
+    new CommandConverterStrategy(),
 ];
 
 export class Calculator {
@@ -45,36 +75,38 @@ export class Calculator {
     private parser: Parser;
 
     constructor(
-        private operations: IOperation[] = OPERATIONS,
         private lexerStrategies: ILexerStrategy[] = LEXER_STRATEGIES,
         private parserStrategies: IParserStrategy[] = PARSER_STRATEGIES,
+        private converterStrategies: IInfixRPNConverterStrategy[] = INFIX_RPN_CONVERTER_STRATEGIES,
     ) {
         this.parser = new Parser(this.parserStrategies);
-        this.validator = new Validator(this.operations.map(op => op.symbol));
+        this.validator = new Validator();
     }
 
     calculate(expression: string): number {
-        this.validator.checkString(expression);
-        const filtered = filterWhitespaces(expression);
-        const validated = this.validate(filtered);
+        const validated = this.validate(expression);
         const tokenized = this.tokenize(validated);
-        const parsed = this.parser.parse(tokenized);
-        const converted = this.convertInfixToRPN(parsed);
+        const parsed = this.parse(tokenized);
+        const rpnConverted = this.convertInfixToRPN(parsed);
 
-        return this.calculateRPN(converted);
+        return this.calculateRPN(rpnConverted);
     }
 
     private validate(expression: string) {
+        this.validator.checkString(expression);
         this.validator.checkEmptyString(expression);
-        this.validator.checkNotAllowedSymbols(expression);
         this.validator.checkParentheses(expression);
 
         return expression;
     }
 
+    private parse(tokenized: TRawToken[]) {
+        return this.parser.parse(tokenized);
+    }
+
     private tokenize(expression: string): TRawToken[] {
         const tokenized: TRawToken[] = [];
-        const lexer = new Lexer<TLexerToken>(expression, this.lexerStrategies);
+        const lexer = new Lexer(expression, this.lexerStrategies);
 
         let token;
 
@@ -96,7 +128,7 @@ export class Calculator {
     }
 
     private convertInfixToRPN(expression: TParsedToken[]) {
-        const converter = new InfixRPNConverter(expression);
+        const converter = new InfixRPNConverter(expression, this.converterStrategies);
 
         return converter.convert();
     }

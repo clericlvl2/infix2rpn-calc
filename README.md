@@ -1,6 +1,6 @@
 # Calculator App
 
-A small calculator app built using modern frontend technologies and following SOLID principles.
+A minimalistic calculator app built using modern frontend technologies and following SOLID principles.
 
 https://clericlvl2.github.io/rpn-calculator/
 
@@ -22,6 +22,7 @@ For example, the infix expression `3 + 4 × 2`:
 
 ## Features
 - Basic arithmetic operations on decimal numbers
+- Supported functions: sin, cos, tan, log, ln, sqrt, exp, fact
 - Responsive design for various screen sizes
 
 ## Technologies
@@ -62,21 +63,15 @@ Run the test suite with:
 
 ## Roadmap
 - Calculator:
-  - Add associativity support
-  - Add suffix support
-  - Add functions support (sqrt, sin, etc.)
   - Add variables support (pi, e, etc)
-  - Add decimal numbers with comma support
   - Add scientific numbers support
   - Add calculation cache
-  - Add rpn notation hook, show notation on every input
-  - Add key-pressing event listeners
+  - Add calculation history
+  - Add hooks on calculation stages
 - UI:
-  - Add minimalistic and visually appealing look, possibly pixel-art
-  - Add an informer explaining reverse polish notation
-  - Add a visible field for showing current rpn notation
-  - Add small 'about me' section
+  - Add key-pressing event listeners
+  - Add functions buttons
+  - Add rpn notation preview
+  - Add rpn algorithm info
+  - Add about section
   - Add theme picker
-- Fix:
-  - Fix input scroll behaviour on backspace, not intuitive
-  - Fix max input length

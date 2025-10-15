@@ -1,4 +1,4 @@
-import { isExist } from '@shared/model/validation';
+import { isExist } from './validation';
 
 export class Stack<Item> {
     private stack: Item[];
@@ -25,6 +25,10 @@ export class Stack<Item> {
 
     readTop(): Item | null {
         return this.stack[this.size() - 1] ?? null;
+    }
+
+    toArray(): Item[] {
+        return [...this.stack];
     }
 
     popTo(target: unknown[], count: number): void {

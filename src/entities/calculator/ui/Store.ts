@@ -1,8 +1,8 @@
 import { Signal, signal } from '@preact/signals';
 import { createContext } from 'preact';
 import { Calculator } from '../model/Calculator';
-import { Operation } from '../model/operations/constants';
-import type { IOperation } from '../model/operations/model';
+import type { IOperation } from '../model/token/operations/model';
+import { Operation } from '../model/token/operations/operations';
 
 export interface IStoreContext {
     expression: Signal<string>;
@@ -18,10 +18,10 @@ export interface IStoreContext {
 }
 
 export const DEFAULT_OPERATIONS = [
-    Operation.Plus,
-    Operation.Minus,
-    Operation.UnaryPlus,
-    Operation.UnaryMinus,
+    Operation.Add,
+    Operation.Subtract,
+    Operation.UnaryAdd,
+    Operation.UnarySubtract,
     Operation.Multiply,
     Operation.Divide,
 ];

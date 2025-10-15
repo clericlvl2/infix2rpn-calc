@@ -19,8 +19,7 @@ describe('Calculator', () => {
         expect(calculator.calculate('3 + 4 * 2')).toBe(11);
     });
 
-    // todo associativity not addressed yet
-    it.skip('handles operators associativity', () => {
+    it('handles operators associativity', () => {
         expect(calculator.calculate('4 ^ 3 ^ 2')).toBe(262144);
         expect(calculator.calculate('4 + 3 + 2')).toBe(9);
     });
@@ -32,6 +31,56 @@ describe('Calculator', () => {
     it('handles unary operations', () => {
         expect(calculator.calculate('-5')).toBe(-5);
         expect(calculator.calculate('+2')).toBe(2);
+    });
+
+    it('handles factorial operations', () => {
+        expect(calculator.calculate('fact(5)')).toBe(120);
+        expect(calculator.calculate('fact(0)')).toBe(1);
+        expect(calculator.calculate('fact(1)')).toBe(1);
+        expect(calculator.calculate('fact(3)')).toBe(6);
+        expect(calculator.calculate('fact(4)')).toBe(24);
+        expect(calculator.calculate('fact(3 + 2)')).toBe(120);
+        expect(calculator.calculate('fact(3) + 2')).toBe(8);
+        expect(calculator.calculate('fact(3) * fact(2)')).toBe(12);
+    });
+
+    it('handles trigonometric functions', () => {
+        expect(calculator.calculate('sin(0)')).toBeCloseTo(0);
+        expect(calculator.calculate('cos(0)')).toBeCloseTo(1);
+        expect(calculator.calculate('tan(0)')).toBeCloseTo(0);
+        expect(calculator.calculate('sin(1.57)')).toBeCloseTo(1); // π/2
+        expect(calculator.calculate('cos(3.14)')).toBeCloseTo(-1); // π
+        expect(calculator.calculate('sin(3.14 / 2)')).toBeCloseTo(1); // π/2
+    });
+
+    it('handles logarithmic functions', () => {
+        expect(calculator.calculate('log(100)')).toBe(2);
+        expect(calculator.calculate('log(1000)')).toBe(3);
+        expect(calculator.calculate('ln(2.71)')).toBeCloseTo(1);
+        expect(calculator.calculate('ln(1)')).toBe(0);
+        expect(calculator.calculate('log(10 ^ 3)')).toBe(3);
+    });
+
+    it('handles square root function', () => {
+        expect(calculator.calculate('sqrt(4)')).toBe(2);
+        expect(calculator.calculate('sqrt(9)')).toBe(3);
+        expect(calculator.calculate('sqrt(16)')).toBe(4);
+        expect(calculator.calculate('sqrt(2)')).toBeCloseTo(1.41);
+        expect(calculator.calculate('sqrt(25) + 5')).toBe(10);
+    });
+
+    it('handles exponential function', () => {
+        expect(calculator.calculate('exp(0)')).toBe(1);
+        expect(calculator.calculate('exp(1)')).toBeCloseTo(2.71828);
+        expect(calculator.calculate('exp(2)')).toBeCloseTo(7.38904);
+        expect(calculator.calculate('exp(1) + 1')).toBeCloseTo(3.71828);
+    });
+
+    it('handles combinations of commands', () => {
+        expect(calculator.calculate('sin(0) + cos(0)')).toBeCloseTo(1);
+        expect(calculator.calculate('sqrt(16) * fact(3)')).toBe(24);
+        expect(calculator.calculate('log(100) + ln(1)')).toBe(2);
+        expect(calculator.calculate('exp(0) + sqrt(9)')).toBe(4);
     });
 
     it('handles spaces and extra whitespace', () => {
@@ -48,6 +97,16 @@ describe('Calculator', () => {
     it('handles very long expression', () => {
         const expression = '1 + '.repeat(10000) + '1';
         expect(calculator.calculate(expression)).toBe(10001);
+    });
+
+    it('handles complex expressions with brackets, operators and commands', () => {
+        expect(calculator.calculate('sin(0) + (cos(0) * 2)')).toBeCloseTo(2);
+        expect(calculator.calculate('(sqrt(16) + fact(3)) * 2')).toBe(20);
+        expect(calculator.calculate('log(100) + (ln(1) * 5)')).toBe(2);
+        expect(calculator.calculate('(exp(1) + sqrt(9)) * 2')).toBeCloseTo(11.43656);
+        expect(calculator.calculate('sin(3.14 / 2) + cos(0) * sqrt(4)')).toBeCloseTo(3);
+        expect(calculator.calculate('fact(3) + sqrt(16) * log(100)')).toBe(14);
+        expect(calculator.calculate('(sin(0) + cos(0)) * (fact(3) + sqrt(16))')).toBe(10);
     });
 
     it('handles nested operations', () => {
@@ -106,8 +165,7 @@ describe('Calculator', () => {
         expect(() => calculator.calculate('')).toThrow();
     });
 
-    // todo think about empty parens behaviour
-    it.skip('throws on empty parentheses', () => {
+    it('throws on empty parentheses', () => {
         expect(() => calculator.calculate('()')).toThrow();
     });
 

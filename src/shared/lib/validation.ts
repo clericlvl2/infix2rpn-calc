@@ -1,6 +1,3 @@
-export const DECIMAL_NUMBER_REGEX = /^\d+([.,]\d+)?/;
-export const SCIENTIFIC_NUMBER_REGEX = /^\d+([.,]\d+)?([eE][+-]?\d+)?/;
-export const HEXADECIMAL_NUMBER_REGEX = /^0[xX][0-9a-fA-F]+$/;
 export const PARENTHESES_REGEX = /^[()]/;
 export const WHITESPACE_REGEX = /^\s+/;
 export const WHITESPACE_REGEX_GLOBAL = /\s+/g;
@@ -18,10 +15,6 @@ export const isEmptyString = (str: string | ''): str is '' => {
 };
 
 export const isString = (value: unknown | string): value is string => typeof value === 'string';
-
-export const isStringDecimalNumber = (value: unknown): value is string => {
-    return isString(value) && DECIMAL_NUMBER_REGEX.test(value);
-};
 
 export const filterWhitespaces = (str: string): string => {
     return str.replace(WHITESPACE_REGEX_GLOBAL, '');

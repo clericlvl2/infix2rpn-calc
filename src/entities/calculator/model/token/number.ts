@@ -1,16 +1,19 @@
-import { DECIMAL_NUMBER_REGEX } from '@shared/model/validation';
 import {
     IntegerDigitsOverflowError,
     InvalidNumberFormatError,
-    LargeNumberError,
-    LongNumberError,
-    PricisionDigitsOverflowError,
+    TooLargeNumberError,
+    MaxDigitsOverflowError,
+    PrecisionDigitsOverflowError,
 } from '../errors';
 
-const MAX_TOTAL_DIGITS = 15;
-const MAX_BEFORE_DECIMAL = 12;
-const MAX_AFTER_DECIMAL = 8;
-const MAX_VALUE = 1e15;
+export const DECIMAL_NUMBER_REGEX = /^\d+(\.\d+)?/;
+export const SCIENTIFIC_NUMBER_REGEX = /^\d+(\.\d+)?([eE][+-]?\d+)?/;
+export const HEXADECIMAL_NUMBER_REGEX = /^0[xX][0-9a-fA-F]+$/;
+
+export const MAX_TOTAL_DIGITS = 15;
+export const MAX_BEFORE_DECIMAL = 12;
+export const MAX_AFTER_DECIMAL = 8;
+export const MAX_VALUE = 1e15;
 
 export const validateNumber = (numericInput: number) => {
     const absNumber = Math.abs(numericInput);
@@ -27,14 +30,16 @@ export const validateNumber = (numericInput: number) => {
     }
 
     if (fracPart.length > MAX_AFTER_DECIMAL) {
-        throw new PricisionDigitsOverflowError(MAX_AFTER_DECIMAL);
+        throw new PrecisionDigitsOverflowError(MAX_AFTER_DECIMAL);
     }
 
     if (intPart.length + fracPart.length > MAX_TOTAL_DIGITS) {
-        throw new LongNumberError(MAX_TOTAL_DIGITS);
+        throw new MaxDigitsOverflowError(MAX_TOTAL_DIGITS);
     }
 
     if (absNumber > MAX_VALUE) {
-        throw new LargeNumberError(MAX_VALUE);
+        throw new TooLargeNumberError(MAX_VALUE);
     }
 };
+
+export const toPrecision = (num: number) => parseFloat(num.toFixed(MAX_AFTER_DECIMAL));

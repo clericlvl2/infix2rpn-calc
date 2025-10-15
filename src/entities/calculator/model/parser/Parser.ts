@@ -1,16 +1,14 @@
-import { TParsedToken, TRawToken } from '../token';
+import { TParsedToken, TRawToken } from '../token/token';
 import { IParserStrategy } from './model';
 
 export class Parser {
     constructor(private readonly rules: IParserStrategy[]) {}
 
     parse(expression: TRawToken[]): TParsedToken[] {
-        // @ts-expect-error todo do something
+        // @ts-expect-error todo Parser must be generic to be type-safe
         return expression.map<TParsedToken>((token, position) => {
             for (const rule of this.rules) {
-                const match = rule.match(token);
-
-                if (match) {
+                if (rule.match(token)) {
                     return rule.create(token, expression, position);
                 }
             }

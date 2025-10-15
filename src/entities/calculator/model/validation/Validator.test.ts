@@ -5,7 +5,7 @@ describe('Validator', () => {
     let validator: Validator;
 
     beforeEach(() => {
-        validator = new Validator(['+', '-', '*', '/', '^']);
+        validator = new Validator();
     });
 
     describe('checkString', () => {
@@ -25,35 +25,6 @@ describe('Validator', () => {
 
         it('throws for empty string', () => {
             expect(() => validator.checkEmptyString('')).toThrow();
-        });
-    });
-
-    describe('checkNotAllowedSymbols', () => {
-        it('handles expression with only numbers', () => {
-            expect(() => validator.checkNotAllowedSymbols('123')).not.toThrow();
-        });
-
-        it('handles expression with only operators', () => {
-            expect(() => validator.checkNotAllowedSymbols('+')).not.toThrow();
-        });
-
-        it('does not throw for expression with only allowed symbols', () => {
-            expect(() => validator.checkNotAllowedSymbols('2+2')).not.toThrow();
-        });
-
-        it('throws for expression with disallowed symbols', () => {
-            expect(() => validator.checkNotAllowedSymbols('2+2$')).toThrow();
-        });
-
-        it('handles expression with decimal numbers', () => {
-            expect(() => validator.checkNotAllowedSymbols('3.14')).not.toThrow();
-        });
-
-        it('handles expressions with special characters in operators', () => {
-            const specialOperators = ['√'];
-            const specialValidator = new Validator(specialOperators);
-
-            expect(() => specialValidator.checkNotAllowedSymbols('√4')).not.toThrow();
         });
     });
 
@@ -93,38 +64,13 @@ describe('Validator', () => {
         });
     });
 
-    describe('createAllowedSymbolsRegex (private method)', () => {
-        it('creates a regex that matches allowed symbols', () => {
-            expect(() => validator.checkNotAllowedSymbols('2+2')).not.toThrow();
-            expect(() => validator.checkNotAllowedSymbols('3.14*(2-1)')).not.toThrow();
-            expect(() => validator.checkNotAllowedSymbols('1+2*3/4^5')).not.toThrow();
-        });
-
-        it('creates a regex that rejects disallowed symbols', () => {
-            expect(() => validator.checkNotAllowedSymbols('2+2$')).toThrow();
-            expect(() => validator.checkNotAllowedSymbols('sin(x)')).toThrow();
-            expect(() => validator.checkNotAllowedSymbols('x=2+2')).toThrow();
-        });
-    });
-
     it('validates a complete valid expression', () => {
         const expression = '(2+3)*(4/2)';
 
         expect(() => {
             validator.checkString(expression);
             validator.checkEmptyString(expression);
-            validator.checkNotAllowedSymbols(expression);
             validator.checkParentheses(expression);
         }).not.toThrow();
-    });
-
-    it('fails validation for an invalid expression with multiple issues', () => {
-        const expression = '(2+$)';
-
-        expect(() => {
-            validator.checkString(expression);
-            validator.checkEmptyString(expression);
-            validator.checkNotAllowedSymbols(expression);
-        }).toThrow();
     });
 });

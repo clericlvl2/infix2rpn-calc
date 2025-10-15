@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { BASIC_ARITHMETIC_REGEX } from '../operations/constants';
-import { TLexerToken, TokenType } from '../token';
+import { BASIC_ARITHMETIC_REGEX } from '../token/operations/operations';
+import { TokenType } from '../token/token';
 import { Lexer } from './Lexer';
 import {
     EOFLexerStrategy,
@@ -9,10 +9,10 @@ import {
     OperatorLexerStrategy,
     ParensLexerStrategy,
     WhitespaceLexerStrategy,
-} from './strategies';
+} from './LexerStrategies';
 
 describe('Lexer', () => {
-    const lexerFactory = (input: string) => new Lexer<TLexerToken>(input, [
+    const lexerFactory = (input: string) => new Lexer(input, [
         new WhitespaceLexerStrategy(),
         new NumberLexerStrategy(),
         new OperatorLexerStrategy(BASIC_ARITHMETIC_REGEX),

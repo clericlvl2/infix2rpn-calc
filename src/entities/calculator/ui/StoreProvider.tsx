@@ -1,6 +1,6 @@
 import { signal } from '@preact/signals';
 import { ComponentChildren } from 'preact';
-import type { IOperation } from '../model/operations/model';
+import type { IOperation } from '../model/token/operations/model';
 import { DEFAULT_OPERATIONS, initCalculator, IStoreContext, StoreContext } from './Store';
 
 interface IStoreProviderProps {

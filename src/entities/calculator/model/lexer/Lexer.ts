@@ -1,8 +1,8 @@
 import { InvalidSymbolError } from '../errors';
-import { IAbstractToken } from '../token';
+import { TLexerToken } from '../token/token';
 import { ILexerStrategy } from './model';
 
-export class Lexer<Token extends IAbstractToken> {
+export class Lexer {
     private position = 0;
 
     constructor(
@@ -11,7 +11,7 @@ export class Lexer<Token extends IAbstractToken> {
     ) {
     }
 
-    getNextToken(): Token {
+    getNextToken(): TLexerToken {
         for (const rule of this.rules) {
             const lexeme = rule.match(this.input, this.position);
 
@@ -22,7 +22,6 @@ export class Lexer<Token extends IAbstractToken> {
             const token = rule.create(lexeme, this.position);
             this.position += lexeme.length;
 
-            // @ts-expect-error todo i dont know how to handle this AbstractToken vs LexerToken
             return token;
         }
 

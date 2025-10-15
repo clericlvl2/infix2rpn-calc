@@ -1,10 +1,10 @@
-import { IAbstractToken } from '../token';
+import { IAbstractToken, TParsedToken } from '../token/token';
 
 export interface IParserStrategy {
-    match(token: IAbstractToken): IAbstractToken | null;
+    match(token: IAbstractToken): boolean;
     create(
         token: IAbstractToken,
-        tokenizedExpression: IAbstractToken[],
+        expression: IAbstractToken[],
         position: number,
-    ): IAbstractToken;
+    ): TParsedToken;
 }

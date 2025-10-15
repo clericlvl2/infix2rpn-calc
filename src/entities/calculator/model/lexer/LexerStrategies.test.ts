@@ -1,15 +1,16 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { BASIC_ARITHMETIC_REGEX } from '../operations/constants';
-import { TokenType } from '../token';
-import { ILexerStrategy } from './model';
+import { BASIC_ARITHMETIC_REGEX } from '../token/operations/operations';
+import { TokenType } from '../token/token';
 import {
+    CommandLexerStrategy,
     EOFLexerStrategy,
     NumberLexerStrategy,
     OperatorLexerStrategy,
     ParensLexerStrategy,
     WhitespaceLexerStrategy,
-} from './strategies';
+} from './LexerStrategies';
+import { ILexerStrategy } from './model';
 
 describe('LexerStrategies', () => {
     describe('NumberLexerStrategy', () => {
@@ -46,19 +47,6 @@ describe('LexerStrategies', () => {
                 '1.5',
                 '0.31231235',
                 '13124254325435.123123123123123',
-            ]);
-        });
-
-        it('matches decimal numbers with dot and comma', () => {
-            const position = 0;
-            const res = [
-                strategy.match('123.5123', position),
-                strategy.match('123,5123', position),
-            ];
-
-            expect(res).toEqual([
-                '123.5123',
-                '123,5123',
             ]);
         });
 
@@ -130,7 +118,7 @@ describe('LexerStrategies', () => {
         });
     });
 
-    describe('ParenthesesLexerStrategy', () => {
+    describe('ParensLexerStrategy', () => {
         let strategy: ILexerStrategy;
 
         beforeEach(() => {
@@ -446,6 +434,90 @@ describe('LexerStrategies', () => {
                 type: TokenType.EOF,
                 position: 5,
             });
+        });
+    });
+
+    describe('CommandLexerStrategy', () => {
+        let strategy: ILexerStrategy;
+        const COMMAND_REGEX = /^[a-zA-Z][a-zA-Z0-9_]*/;
+
+        beforeEach(() => {
+            strategy = new CommandLexerStrategy(COMMAND_REGEX);
+        });
+
+        it('matches command names', () => {
+            const position = 0;
+            const res = [
+                strategy.match('sin', position),
+                strategy.match('cos', position),
+                strategy.match('sqrt', position),
+                strategy.match('log10', position),
+            ];
+
+            expect(res).toEqual(['sin', 'cos', 'sqrt', 'log10']);
+        });
+
+        it('matches commands at arbitrary positions', () => {
+            const res = [
+                strategy.match('sin(0)', 'sin(0)'.indexOf('sin')),
+                strategy.match('2 + cos(0)', '2 + cos(0)'.indexOf('cos')),
+                strategy.match('func_name arg', 'func_name arg'.indexOf('func_name')),
+            ];
+
+            expect(res).toEqual(['sin', 'cos', 'func_name']);
+        });
+
+        it('does not match when position does not point to a command', () => {
+            const res = [
+                strategy.match('1sin', '1sin'.indexOf('1')),
+                strategy.match('(cos)', '(cos)'.indexOf('(')),
+                strategy.match('123func', '123func'.indexOf('1')),
+            ];
+
+            expect(res.every(r => r === null)).toBe(true);
+        });
+
+        it('does not match non-command characters', () => {
+            const position = 0;
+            const res = [
+                strategy.match('123', position),
+                strategy.match('+', position),
+                strategy.match('*', position),
+                strategy.match('()', position),
+            ];
+
+            expect(res.every(r => r === null)).toBe(true);
+        });
+
+        it('does not match for out-of-bound positions', () => {
+            const res = [
+                strategy.match('sin', -1),
+                strategy.match('cos', 5),
+                strategy.match('tan', 10),
+            ];
+
+            expect(res.every(r => r === null)).toBe(true);
+        });
+
+        it('creates token correctly', () => {
+            const token = strategy.create('sin', 4);
+
+            expect(token).toEqual({
+                value: 'sin',
+                type: TokenType.RawCommand,
+                position: 4,
+            });
+        });
+
+        it('does not match empty string or invalid inputs', () => {
+            const position = 0;
+            const res = [
+                strategy.match('', position),
+                strategy.match('   ', position),
+                strategy.match('123', position),
+            ];
+
+            expect(res.every(r => r === null)).toBe(true);
         });
     });
 });

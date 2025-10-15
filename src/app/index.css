@@ -2,11 +2,14 @@
 
 body {
     font-family: 'Courier New', monospace;
-    background-color: var(--color-green-950);
+    background: #1a1a1a;
     height: 100vh;
     min-width: 296px;
     max-width: 1280px;
     margin: auto;
+    color: #fff;
+    text-shadow: 0 0 2px #fff, 0 0 4px #aaa;
+    backdrop-filter: blur(10px);
 }
 
 #root {

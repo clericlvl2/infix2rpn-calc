@@ -1,18 +1,20 @@
-import { DECIMAL_NUMBER_REGEX, PARENTHESES_REGEX, WHITESPACE_REGEX } from '@shared/model/validation';
+import { PARENTHESES_REGEX, WHITESPACE_REGEX } from '@shared/lib/validation';
 import { InvalidSymbolError } from '../errors';
-import { isLeftParen, isRightParen, TParen } from '../parentheses';
+import { isLeftParen, isRightParen, TParen } from '../token/parentheses';
 import {
-    createToken,
     EOF_VALUE,
-    IAbstractToken,
     IEOFToken,
     ILParenToken,
     INumberToken,
+    IRawCommandToken,
     IRawOperationToken,
     IRParenToken,
     IWhitespaceToken,
+    TLexerToken,
     TokenType,
-} from '../token';
+} from '../token/token';
+import { createToken } from '../token/utils';
+import { DECIMAL_NUMBER_REGEX } from '../token/number';
 import { ILexerStrategy } from './model';
 
 export const REGEX_MATCH_VALUE_INDEX = 0;
@@ -32,7 +34,7 @@ abstract class LexerStrategy implements ILexerStrategy {
         return lexeme ?? null;
     }
 
-    abstract create(lexeme: string, position: number): IAbstractToken;
+    abstract create(lexeme: string, position: number): TLexerToken;
 }
 
 export class WhitespaceLexerStrategy extends LexerStrategy {
@@ -109,6 +111,20 @@ export class OperatorLexerStrategy extends LexerStrategy {
         return createToken<IRawOperationToken>({
             value: value,
             type: TokenType.RawOperation,
+            position,
+        });
+    }
+}
+
+export class CommandLexerStrategy extends LexerStrategy {
+    constructor(pattern: RegExp) {
+        super(pattern);
+    }
+
+    create(value: string, position: number): IRawCommandToken {
+        return createToken<IRawCommandToken>({
+            value: value,
+            type: TokenType.RawCommand,
             position,
         });
     }
