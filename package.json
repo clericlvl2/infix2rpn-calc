@@ -1,5 +1,5 @@
 {
-  "name": "rpn-calculator",
+  "name": "infix2rpn-calc",
   "version": "0.2.0",
   "description": "Calculator app. Calculation principle based on Reverse Polish Notation",
   "main": "index.js",

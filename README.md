@@ -2,7 +2,7 @@
 
 A minimalistic calculator app built using modern frontend technologies and following SOLID principles.
 
-https://clericlvl2.github.io/rpn-calculator/
+https://clericlvl2.github.io/infix2rpn-calc/
 
 ## Algorithm
 
