@@ -11,7 +11,7 @@ The calculation algorithm works in two steps:
 2. Calculating the RPN expression using a stack-based approach
 
 For example, the infix expression `3 + 4 × 2`:
-- Is converted to RPN: `3 4 2 * +`
+- Is converted to RPN: `3 4 2 × +`
 - Is calculated by processing each token:
   - Push *3* → stack: *[3]*
   - Push *4* → stack: *[3, 4]*
